@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حاسبة المعدل</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --border: #30363d;
+    --accent: #58a6ff;
+    --accent2: #3fb950;
+    --accent3: #f78166;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --input-bg: #0d1117;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+    background-image: radial-gradient(ellipse at top, #1a2a4a 0%, transparent 60%),
+                      radial-gradient(ellipse at bottom right, #0a1f10 0%, transparent 50%);
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    animation: fadeDown 0.6s ease;
+  }
+
+  header h1 {
+    font-size: 2.8rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.3rem;
+  }
+
+  header p {
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  @media (max-width: 700px) {
+    .grid { grid-template-columns: 1fr; }
+    header h1 { font-size: 2rem; }
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    animation: fadeUp 0.6s ease;
+  }
+
+  .card h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .card h2::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 18px;
+    background: var(--accent);
+    border-radius: 4px;
+  }
+
+  /* Table */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+
+  thead th {
+    padding: 0.7rem 0.5rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  thead th:first-child { min-width: 120px; }
+  thead th:nth-child(2), thead th:nth-child(3) { min-width: 60px; }
+
+  tbody tr {
+    border-bottom: 1px solid rgba(48,54,61,0.5);
+    transition: background 0.2s;
+  }
+  tbody tr:hover { background: rgba(88,166,255,0.04); }
+
+  tbody td { padding: 0.4rem 0.3rem; text-align: center; }
+
+  input[type="text"], input[type="number"] {
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 0.45rem 0.6rem;
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.85rem;
+    width: 100%;
+    text-align: center;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+  }
+
+  input[type="text"] { text-align: right; min-width: 110px; }
+
+  input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(88,166,255,0.15);
+  }
+
+  .grade-display {
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    min-width: 36px;
+    display: inline-block;
+  }
+
+  .points-display {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  /* Results */
+  .results-card { animation: fadeUp 0.7s ease; }
+
+  .result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.9rem 1rem;
+    border-radius: 10px;
+    margin-bottom: 0.8rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+  }
+
+  .result-label {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .result-value {
+    font-size: 1.3rem;
+    font-weight: 900;
+  }
+
+  .big-result {
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 14px;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, rgba(88,166,255,0.1), rgba(63,185,80,0.1));
+    border: 1px solid rgba(88,166,255,0.3);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .big-result::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(88,166,255,0.05), transparent);
+    pointer-events: none;
+  }
+
+  .big-result .label {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+
+  .big-result .value {
+    font-size: 3.5rem;
+    font-weight: 900;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .big-result .grade-letter {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-top: 0.3rem;
+  }
+
+  /* Previous GPA */
+  .prev-section {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .input-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .input-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+  }
+
+  .input-group label {
+    font-size: 0.82rem;
+    color: var(--muted);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .input-group input {
+    max-width: 100px;
+  }
+
+  .cumulative-result {
+    margin-top: 1rem;
+    text-align: center;
+    padding: 1rem;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(247,129,102,0.1), rgba(88,166,255,0.1));
+    border: 1px solid rgba(247,129,102,0.3);
+  }
+
+  .cumulative-result .label { font-size: 0.8rem; color: var(--muted); }
+  .cumulative-result .value {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--accent3);
+  }
+
+  /* Grade color classes */
+  .A-plus { color: #3fb950; background: rgba(63,185,80,0.15); }
+  .A      { color: #58a6ff; background: rgba(88,166,255,0.15); }
+  .B-plus { color: #a5d6ff; background: rgba(165,214,255,0.12); }
+  .B      { color: #d2a8ff; background: rgba(210,168,255,0.15); }
+  .C-plus { color: #ffa657; background: rgba(255,166,87,0.15); }
+  .C      { color: #f0b429; background: rgba(240,180,41,0.15); }
+  .D-plus { color: #f78166; background: rgba(247,129,102,0.15); }
+  .D      { color: #ff7b72; background: rgba(255,123,114,0.15); }
+  .F      { color: #ff6369; background: rgba(255,99,105,0.2); }
+  .none   { color: var(--muted); background: transparent; }
+
+  /* Add/remove rows */
+  .btn {
+    background: none;
+    border: 1px dashed var(--border);
+    color: var(--muted);
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-family: 'Cairo', sans-serif;
+    font-size: 0.85rem;
+    width: 100%;
+    margin-top: 0.7rem;
+    transition: all 0.2s;
+  }
+
+  .btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(88,166,255,0.05); }
+
+  .remove-btn {
+    background: none;
+    border: none;
+    color: var(--border);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0 4px;
+    transition: color 0.2s;
+  }
+  .remove-btn:hover { color: var(--accent3); }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hint { font-size: 0.75rem; color: var(--muted); text-align: center; margin-top: 0.5rem; }
+
+  footer {
+    text-align: center;
+    margin-top: 2.5rem;
+    padding: 1.2rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.85rem;
+    animation: fadeUp 0.8s ease;
+  }
+
+  footer span {
+    color: var(--accent);
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>🎓 حاسبة المعدل</h1>
+    <p>أدخل المواد والدرجات لحساب معدلك الفصلي والتراكمي</p>
+  </header>
+
+  <div class="grid">
+    <!-- Table -->
+    <div class="card">
+      <h2>المواد الدراسية</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>المادة</th>
+              <th>الدرجة %</th>
+              <th>الساعات</th>
+              <th>التقدير</th>
+              <th>النقاط</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="courses-body"></tbody>
+        </table>
+      </div>
+      <button class="btn" onclick="addRow()">+ إضافة مادة</button>
+      <p class="hint">أدخل الدرجة كنسبة مئوية (0-100)</p>
+    </div>
+
+    <!-- Results -->
+    <div class="card results-card">
+      <h2>النتائج</h2>
+
+      <div class="big-result">
+        <div class="label">المعدل الفصلي</div>
+        <div class="value" id="gpa-value">—</div>
+        <div class="grade-letter" id="gpa-letter"></div>
+      </div>
+
+      <div class="result-item">
+        <span class="result-label">مجموع الساعات المعتمدة</span>
+        <span class="result-value" id="total-hours" style="color: var(--accent)">0</span>
+      </div>
+      <div class="result-item">
+        <span class="result-label">مجموع النقاط</span>
+        <span class="result-value" id="total-points" style="color: var(--accent2)">0</span>
+      </div>
+
+      <!-- Cumulative -->
+      <div class="prev-section">
+        <div style="font-size:0.85rem; color: var(--muted); margin-bottom: 0.8rem;">المعدل التراكمي (اختياري)</div>
+        <div class="input-row">
+          <div class="input-group">
+            <label>معدلك التراكمي السابق</label>
+            <input type="number" id="prev-gpa" min="0" max="4" step="0.01" placeholder="0.00" oninput="calculate()">
+          </div>
+          <div class="input-group">
+            <label>ساعات درستها سابقاً</label>
+            <input type="number" id="prev-hours" min="0" step="1" placeholder="0" oninput="calculate()">
+          </div>
+        </div>
+        <div class="cumulative-result" id="cumulative-section" style="display:none">
+          <div class="label">معدلك التراكمي المتوقع</div>
+          <div class="value" id="cum-gpa">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  حقوق الملكية الفكرية © <span>د. سالم بن سعيد الحارثي</span>
+</footer>
+
+<script>
+// الخوارزميات مأخوذة مباشرة من ملف Excel د. سالم الحارثي
+const gradeMap = [
+  { min: 95, letter: 'أ',   points: 4.0  },
+  { min: 90, letter: 'أ-',  points: 3.7  },
+  { min: 87, letter: 'ب+',  points: 3.3  },
+  { min: 83, letter: 'ب',   points: 3.0  },
+  { min: 80, letter: 'ب-',  points: 2.7  },
+  { min: 77, letter: 'ج+',  points: 2.3  },
+  { min: 73, letter: 'ج',   points: 2.0  },
+  { min: 70, letter: 'ج-',  points: 1.7  },
+  { min: 65, letter: 'د+',  points: 1.3  },
+  { min: 60, letter: 'د',   points: 1.0  },
+  { min: 0,  letter: 'هـ',  points: 0.0  },
+];
+
+function getGrade(score) {
+  if (score === '' || score === null || isNaN(score)) return null;
+  for (const g of gradeMap) {
+    if (score >= g.min) return g;
+  }
+  return gradeMap[gradeMap.length - 1];
+}
+
+function gradeClass(letter) {
+  if (!letter) return 'none';
+  const map = {
+    'أ': 'A', 'أ-': 'A', 'ب+': 'B-plus', 'ب': 'B',
+    'ب-': 'B', 'ج+': 'C-plus', 'ج': 'C', 'ج-': 'C',
+    'د+': 'D-plus', 'د': 'D', 'هـ': 'F'
+  };
+  return map[letter] || 'none';
+}
+
+let rows = [];
+
+function addRow() {
+  const id = Date.now();
+  rows.push(id);
+  renderRows();
+}
+
+function removeRow(id) {
+  rows = rows.filter(r => r !== id);
+  renderRows();
+  calculate();
+}
+
+function renderRows() {
+  const tbody = document.getElementById('courses-body');
+  tbody.innerHTML = '';
+  rows.forEach((id, i) => {
+    const tr = document.createElement('tr');
+    tr.id = 'row-' + id;
+    tr.innerHTML = `
+      <td><input type="text" placeholder="اسم المادة" id="name-${id}"></td>
+      <td><input type="number" min="0" max="100" placeholder="—" id="score-${id}" oninput="calculate()"></td>
+      <td><input type="number" min="1" max="6" placeholder="3" id="hours-${id}" value="3" oninput="calculate()"></td>
+      <td><span class="grade-display none" id="letter-${id}">—</span></td>
+      <td><span class="points-display" id="pts-${id}">—</span></td>
+      <td><button class="remove-btn" onclick="removeRow(${id})">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+  calculate();
+}
+
+function calculate() {
+  let totalHours = 0, totalPoints = 0;
+
+  rows.forEach(id => {
+    const score = parseFloat(document.getElementById('score-' + id)?.value);
+    const hours = parseFloat(document.getElementById('hours-' + id)?.value) || 0;
+    const grade = getGrade(score);
+    const letterEl = document.getElementById('letter-' + id);
+    const ptsEl = document.getElementById('pts-' + id);
+
+    if (grade && hours > 0 && !isNaN(score)) {
+      letterEl.textContent = grade.letter;
+      letterEl.className = 'grade-display ' + gradeClass(grade.letter);
+      ptsEl.textContent = (grade.points * hours).toFixed(2);
+      totalHours += hours;
+      totalPoints += grade.points * hours;
+    } else {
+      if (letterEl) { letterEl.textContent = '—'; letterEl.className = 'grade-display none'; }
+      if (ptsEl) ptsEl.textContent = '—';
+    }
+  });
+
+  document.getElementById('total-hours').textContent = totalHours;
+  document.getElementById('total-points').textContent = totalPoints.toFixed(2);
+
+  const gpaEl = document.getElementById('gpa-value');
+  const letterEl = document.getElementById('gpa-letter');
+
+  if (totalHours > 0) {
+    const gpa = totalPoints / totalHours;
+    gpaEl.textContent = gpa.toFixed(2);
+    const g = getGrade(gpa / 4 * 100);
+    if (g) {
+      letterEl.textContent = g.letter;
+      letterEl.style.color = getComputedStyle(document.documentElement).getPropertyValue('--accent');
+    }
+  } else {
+    gpaEl.textContent = '—';
+    letterEl.textContent = '';
+  }
+
+  // Cumulative
+  const prevGPA = parseFloat(document.getElementById('prev-gpa').value);
+  const prevHours = parseFloat(document.getElementById('prev-hours').value) || 0;
+  const cumSection = document.getElementById('cumulative-section');
+
+  // معادلة مطابقة للملف: =((I11*I10)+I3)/(I2+I11)
+  // I10 = المعدل التراكمي السابق, I11 = الساعات السابقة, I3 = مجموع نقاط الفصل, I2 = ساعات الفصل
+  const denominator = totalHours + prevHours;
+  if (!isNaN(prevGPA) && !isNaN(prevHours) && denominator > 0 && totalHours > 0) {
+    const cumGPA = ((prevHours * prevGPA) + totalPoints) / denominator;
+    document.getElementById('cum-gpa').textContent = cumGPA.toFixed(2);
+    cumSection.style.display = 'block';
+  } else {
+    cumSection.style.display = 'none';
+  }
+}
+
+// Initialize with 5 rows
+for (let i = 0; i < 5; i++) addRow();
+</script>
+</body>
+</html>
