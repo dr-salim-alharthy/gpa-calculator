@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>حاسبة المعدل الجامعي | د. سالم الحارثي</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #faf8f3;
+    --ivory: #f4f1e8;
+    --paper: #fffef9;
+    --ink: #1a1612;
+    --ink-light: #3d3530;
+    --ink-muted: #7a6f65;
+    --ink-faint: #b5a99a;
+    --gold: #b8882a;
+    --gold-light: #d4a94a;
+    --gold-pale: #f5e9cc;
+    --forest: #2d5a3d;
+    --forest-light: #3d7a52;
+    --forest-pale: #e0efe5;
+    --crimson: #8b2a2a;
+    --crimson-pale: #f5e0e0;
+    --sky: #2a4a6b;
+    --sky-pale: #e0eaf5;
+    --border: #ddd5c8;
+    --shadow: rgba(26,22,18,0.08);
+    --radius: 12px;
+    --mode-accent: var(--gold);
+    --mode-accent-pale: var(--gold-pale);
+    --mode-accent-light: var(--gold-light);
+  }
+  body.masters {
+    --mode-accent: var(--forest);
+    --mode-accent-pale: var(--forest-pale);
+    --mode-accent-light: var(--forest-light);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { font-family:'Cairo',sans-serif; background:var(--cream); color:var(--ink); min-height:100vh; overflow-x:hidden; }
+
+  /* NAV */
+  nav {
+    background:var(--paper); border-bottom:1px solid var(--border);
+    padding:0 2rem; position:sticky; top:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    height:64px; box-shadow:0 1px 12px var(--shadow);
+  }
+  .nav-brand { display:flex; align-items:center; gap:.75rem; }
+  .nav-logo {
+    width:36px; height:36px;
+    background:linear-gradient(135deg,var(--gold),var(--forest));
+    border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.1rem;
+  }
+  .nav-title { font-family:'Amiri',serif; font-size:1.15rem; font-weight:700; color:var(--ink); line-height:1.2; }
+  .nav-subtitle { font-size:.7rem; color:var(--ink-muted); }
+  .nav-links { display:flex; gap:.25rem; }
+  .nav-link {
+    padding:.4rem .9rem; border-radius:8px; font-size:.85rem; color:var(--ink-muted);
+    text-decoration:none; cursor:pointer; border:none; background:none;
+    font-family:'Cairo',sans-serif; transition:all .2s;
+  }
+  .nav-link:hover { background:var(--gold-pale); color:var(--gold); }
+
+  /* MODE SWITCHER */
+  .mode-bar {
+    background:var(--ivory); border-bottom:1px solid var(--border);
+    padding:.85rem 2rem; display:flex; align-items:center;
+    justify-content:center; gap:1rem; flex-wrap:wrap;
+  }
+  .mode-label { font-size:.84rem; color:var(--ink-muted); font-weight:600; }
+  .mode-toggle {
+    display:flex; background:var(--paper); border:1px solid var(--border);
+    border-radius:100px; padding:4px; gap:4px;
+    box-shadow:0 1px 6px var(--shadow);
+  }
+  .mode-btn {
+    padding:.42rem 1.3rem; border-radius:100px; border:none; background:none;
+    font-family:'Cairo',sans-serif; font-size:.86rem; font-weight:600;
+    color:var(--ink-muted); cursor:pointer; transition:all .25s; white-space:nowrap;
+  }
+  .mode-btn.active-bach { background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:#fff; box-shadow:0 2px 10px rgba(184,136,42,.35); }
+  .mode-btn.active-mast { background:linear-gradient(135deg,var(--forest),var(--forest-light)); color:#fff; box-shadow:0 2px 10px rgba(45,90,61,.35); }
+  .mode-badge {
+    display:inline-flex; align-items:center; gap:.4rem;
+    font-size:.76rem; padding:.28rem .85rem; border-radius:100px; border:1px solid; font-weight:600;
+    transition:all .3s;
+  }
+  .badge-bach { background:var(--gold-pale); border-color:rgba(184,136,42,.3); color:var(--gold); }
+  .badge-mast { background:var(--forest-pale); border-color:rgba(45,90,61,.3); color:var(--forest); }
+
+  /* HERO */
+  .hero {
+    padding:3rem 2rem 2.5rem; text-align:center; position:relative; overflow:hidden;
+    background:linear-gradient(160deg,var(--paper) 0%,var(--ivory) 100%);
+    border-bottom:1px solid var(--border); animation:fadeDown .7s ease;
+  }
+  .hero::before {
+    content:''; position:absolute; top:-80px; right:-80px;
+    width:280px; height:280px;
+    background:radial-gradient(circle,rgba(184,136,42,.07) 0%,transparent 70%);
+    pointer-events:none; transition:opacity .4s;
+  }
+  body.masters .hero::before { background:radial-gradient(circle,rgba(45,90,61,.07) 0%,transparent 70%); }
+  .hero h1 { font-family:'Amiri',serif; font-size:2.8rem; font-weight:700; color:var(--ink); margin-bottom:.5rem; line-height:1.2; }
+  .hero h1 .accent { color:var(--mode-accent); transition:color .3s; }
+  .hero p { font-size:.94rem; color:var(--ink-muted); max-width:500px; margin:0 auto 1.8rem; line-height:1.7; }
+  .hero-stats {
+    display:inline-flex; background:var(--paper); border:1px solid var(--border);
+    border-radius:14px; box-shadow:0 2px 16px var(--shadow); overflow:hidden;
+  }
+  .hero-stat { text-align:center; padding:.9rem 1.6rem; }
+  .hero-stat + .hero-stat { border-right:1px solid var(--border); }
+  .hero-stat-value { font-family:'Amiri',serif; font-size:1.7rem; font-weight:700; color:var(--mode-accent); line-height:1; transition:color .3s; }
+  .hero-stat-label { font-size:.7rem; color:var(--ink-muted); margin-top:.2rem; }
+
+  /* MAIN */
+  main { max-width:1100px; margin:0 auto; padding:2.5rem 1.5rem 4rem; }
+  .sec-label { display:flex; align-items:center; gap:.7rem; margin-bottom:1.2rem; }
+  .sec-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; transition:background .3s; }
+  .sec-label h2 { font-family:'Amiri',serif; font-size:1.25rem; color:var(--ink); }
+  .sec-label span { font-size:.77rem; color:var(--ink-muted); margin-right:.2rem; }
+
+  .layout { display:grid; grid-template-columns:1fr 355px; gap:1.5rem; align-items:start; }
+  @media(max-width:760px) {
+    .layout { grid-template-columns:1fr; }
+    .hero h1 { font-size:2rem; }
+    nav { padding:0 1rem; }
+    .nav-links { display:none; }
+    .mode-bar { padding:.7rem 1rem; }
+  }
+
+  /* CARD */
+  .card { background:var(--paper); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; box-shadow:0 2px 16px var(--shadow); animation:fadeUp .6s ease both; }
+
+  /* TABLE */
+  .table-wrap { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; }
+  thead tr { border-bottom:2px solid var(--border); }
+  thead th { padding:.6rem .4rem .8rem; font-size:.75rem; color:var(--ink-muted); text-align:center; font-weight:700; letter-spacing:.02em; white-space:nowrap; }
+  tbody tr { border-bottom:1px solid rgba(221,213,200,.5); transition:background .15s; }
+  tbody tr:hover { background:var(--ivory); }
+  tbody tr:last-child { border-bottom:none; }
+  tbody td { padding:.32rem .3rem; text-align:center; }
+  .row-num { font-size:.72rem; color:var(--ink-faint); font-weight:600; width:24px; }
+
+  input[type="text"], input[type="number"] {
+    background:var(--cream); border:1px solid var(--border); color:var(--ink);
+    border-radius:8px; padding:.42rem .55rem; font-family:'Cairo',sans-serif;
+    font-size:.83rem; width:100%; text-align:center;
+    transition:border-color .2s,box-shadow .2s,background .2s; outline:none;
+  }
+  input[type="text"] { text-align:right; }
+  input:focus { border-color:var(--mode-accent); background:var(--paper); box-shadow:0 0 0 3px rgba(184,136,42,.1); }
+  body.masters input:focus { box-shadow:0 0 0 3px rgba(45,90,61,.1); }
+
+  .grade-badge {
+    display:inline-flex; align-items:center; justify-content:center;
+    min-width:40px; padding:.22rem .45rem; border-radius:6px;
+    font-size:.8rem; font-weight:700; font-family:'Cairo',sans-serif;
+  }
+  .g-none { background:transparent; color:var(--ink-faint); }
+  .g-a    { background:var(--forest-pale); color:var(--forest); }
+  .g-b    { background:var(--sky-pale); color:var(--sky); }
+  .g-c    { background:var(--gold-pale); color:var(--gold); }
+  .g-d    { background:rgba(139,42,42,.08); color:var(--crimson); }
+  .g-f    { background:var(--crimson-pale); color:var(--crimson); }
+
+  .pts-cell { font-size:.8rem; font-weight:600; color:var(--ink-muted); }
+  .remove-btn { background:none; border:none; color:var(--ink-faint); cursor:pointer; font-size:.88rem; padding:.2rem .35rem; border-radius:4px; transition:all .15s; line-height:1; }
+  .remove-btn:hover { background:var(--crimson-pale); color:var(--crimson); }
+  .add-btn { width:100%; margin-top:.8rem; padding:.52rem; background:none; border:1px dashed var(--border); border-radius:8px; color:var(--ink-muted); font-family:'Cairo',sans-serif; font-size:.84rem; cursor:pointer; transition:all .2s; }
+  .add-btn:hover { border-color:var(--mode-accent); color:var(--mode-accent); background:var(--mode-accent-pale); }
+  .tbl-hint { font-size:.71rem; color:var(--ink-faint); text-align:center; margin-top:.4rem; }
+
+  /* RESULTS */
+  .results-col { display:flex; flex-direction:column; gap:1rem; }
+
+  .gpa-box {
+    border-radius:var(--radius); padding:1.8rem 1.5rem; text-align:center;
+    position:relative; overflow:hidden;
+    background:linear-gradient(160deg,var(--ink) 0%,var(--ink-light) 100%);
+    box-shadow:0 4px 24px rgba(26,22,18,.18); animation:fadeUp .65s ease both;
+  }
+  .mode-pill {
+    display:inline-block; font-size:.68rem; font-weight:700;
+    padding:.15rem .7rem; border-radius:100px; margin-bottom:.55rem; transition:all .3s;
+  }
+  .pill-bach { background:rgba(184,136,42,.2); color:var(--gold-light); border:1px solid rgba(184,136,42,.3); }
+  .pill-mast { background:rgba(45,90,61,.3); color:#7ecf97; border:1px solid rgba(63,185,80,.25); }
+  .gpa-lbl { font-size:.74rem; color:rgba(255,255,255,.45); letter-spacing:.07em; margin-bottom:.35rem; }
+  .gpa-num { font-family:'Amiri',serif; font-size:4.2rem; font-weight:700; line-height:1; color:var(--gold-light); margin-bottom:.4rem; transition:color .3s; }
+  body.masters .gpa-num { color:#7ecf97; }
+  .gpa-letter {
+    display:inline-block; font-size:1rem; font-weight:700; padding:.28rem 1.1rem; border-radius:100px;
+    background:rgba(184,136,42,.2); color:var(--gold-light); border:1px solid rgba(184,136,42,.3); transition:all .3s;
+  }
+  body.masters .gpa-letter { background:rgba(45,90,61,.3); color:#7ecf97; border-color:rgba(63,185,80,.3); }
+  .progress-wrap { height:4px; background:rgba(255,255,255,.1); border-radius:2px; margin-top:1rem; overflow:hidden; }
+  .progress-fill { height:100%; background:linear-gradient(90deg,var(--gold-light),#d4a94a); border-radius:2px; transition:width .45s ease; }
+  body.masters .progress-fill { background:linear-gradient(90deg,var(--forest),#7ecf97); }
+
+  .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; animation:fadeUp .7s ease both; }
+  .stat-box { background:var(--paper); border:1px solid var(--border); border-radius:10px; padding:1rem; text-align:center; box-shadow:0 1px 8px var(--shadow); }
+  .stat-lbl { font-size:.7rem; color:var(--ink-muted); margin-bottom:.25rem; }
+  .stat-val { font-family:'Amiri',serif; font-size:1.7rem; font-weight:700; line-height:1; }
+  .val-hrs { color:var(--sky); }
+  .val-pts { color:var(--mode-accent); transition:color .3s; }
+
+  /* CUMULATIVE */
+  .cum-box { background:var(--paper); border:1px solid var(--border); border-radius:var(--radius); padding:1.3rem; box-shadow:0 2px 12px var(--shadow); animation:fadeUp .75s ease both; }
+  .cum-box h3 { font-family:'Amiri',serif; font-size:1rem; color:var(--ink); margin-bottom:1rem; display:flex; align-items:center; gap:.5rem; }
+  .cum-box h3::before { content:''; display:block; width:3px; height:14px; background:var(--mode-accent); border-radius:2px; transition:background .3s; }
+  .cum-field { display:flex; align-items:center; justify-content:space-between; gap:.8rem; margin-bottom:.7rem; }
+  .cum-field label { font-size:.78rem; color:var(--ink-muted); white-space:nowrap; flex-shrink:0; }
+  .cum-field input { max-width:90px; }
+  .cum-result { margin-top:1rem; padding:1rem; border-radius:10px; text-align:center; display:none; }
+  .cum-result.show { display:block; }
+  .cum-bach { background:linear-gradient(135deg,var(--gold-pale),rgba(184,136,42,.04)); border:1px solid rgba(184,136,42,.2); }
+  .cum-mast { background:linear-gradient(135deg,var(--forest-pale),rgba(45,90,61,.04)); border:1px solid rgba(45,90,61,.2); }
+  .cum-result-lbl { font-size:.73rem; margin-bottom:.25rem; }
+  .cum-bach .cum-result-lbl { color:var(--gold); }
+  .cum-mast .cum-result-lbl { color:var(--forest); }
+  .cum-result-val { font-family:'Amiri',serif; font-size:2.6rem; font-weight:700; line-height:1; }
+  .cum-bach .cum-result-val { color:var(--gold); }
+  .cum-mast .cum-result-val { color:var(--forest); }
+
+  /* SCALE */
+  .scale-sec { margin-top:3rem; }
+  .scale-tabs { display:flex; gap:.5rem; margin-bottom:1.1rem; border-bottom:1px solid var(--border); padding-bottom:.8rem; }
+  .stab { padding:.38rem 1.1rem; border-radius:8px; border:1px solid var(--border); background:none; font-family:'Cairo',sans-serif; font-size:.82rem; color:var(--ink-muted); cursor:pointer; transition:all .2s; }
+  .stab-bach.on { background:var(--gold-pale); border-color:rgba(184,136,42,.4); color:var(--gold); font-weight:700; }
+  .stab-mast.on { background:var(--forest-pale); border-color:rgba(45,90,61,.3); color:var(--forest); font-weight:700; }
+  .scale-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(93px,1fr)); gap:.5rem; }
+  .scale-item { background:var(--paper); border:1px solid var(--border); border-radius:8px; padding:.6rem .4rem; text-align:center; transition:transform .15s,box-shadow .15s; }
+  .scale-item:hover { transform:translateY(-2px); box-shadow:0 4px 12px var(--shadow); }
+  .s-range { font-size:.69rem; color:var(--ink-muted); }
+  .s-letter { font-size:1.05rem; font-weight:700; margin:.13rem 0; font-family:'Amiri',serif; }
+  .s-pts { font-size:.69rem; font-weight:600; color:var(--ink-muted); }
+  .diff-note {
+    background:var(--forest-pale); border:1px solid rgba(45,90,61,.2); border-radius:10px;
+    padding:.8rem 1rem; font-size:.78rem; color:var(--forest);
+    margin-bottom:1rem; display:flex; align-items:flex-start; gap:.5rem; line-height:1.6;
+  }
+
+  /* FOOTER */
+  footer { background:var(--ink); color:rgba(255,255,255,.45); text-align:center; padding:2rem; font-size:.82rem; }
+  .f-name { color:var(--gold-light); font-family:'Amiri',serif; font-size:1rem; font-weight:700; }
+  .f-div { width:40px; height:1px; background:rgba(184,136,42,.4); margin:.8rem auto; }
+  .f-copy { font-size:.71rem; opacity:.55; }
+
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-24px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeUp   { from{opacity:0;transform:translateY(20px)}  to{opacity:1;transform:translateY(0)} }
+  @keyframes numPop   { 0%{transform:scale(1)} 50%{transform:scale(1.07)} 100%{transform:scale(1)} }
+  .pop { animation:numPop .25s ease; }
+
+  @media print { nav,.mode-bar,.add-btn,.remove-btn,.scale-sec,footer{display:none} .card,.gpa-box,.cum-box{box-shadow:none;border:1px solid #ccc} }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo">🎓</div>
+    <div>
+      <div class="nav-title">حاسبة المعدل</div>
+      <div class="nav-subtitle">نظام محاسبة أكاديمية</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a class="nav-link" href="#">الحاسبة</a>
+    <a class="nav-link" href="#scale">جدول التقديرات</a>
+    <button class="nav-link" onclick="window.print()">🖨 طباعة</button>
+  </div>
+</nav>
+
+<div class="mode-bar">
+  <span class="mode-label">نوع البرنامج:</span>
+  <div class="mode-toggle">
+    <button class="mode-btn active-bach" id="btn-bach" onclick="setMode('bach')">🎓 بكالوريوس / دبلوم</button>
+    <button class="mode-btn" id="btn-mast" onclick="setMode('mast')">📚 ماجستير</button>
+  </div>
+  <span class="mode-badge badge-bach" id="mode-badge">نظام 4.0 — 11 تقديراً</span>
+</div>
+
+<div class="hero">
+  <h1>حاسبة <span class="accent" id="hero-title">البكالوريوس</span></h1>
+  <p id="hero-desc">أدخل درجاتك وساعاتك المعتمدة لحساب معدلك الفصلي والتراكمي وفق نظام التقدير المعتمد رسمياً</p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-value" id="hero-gpa">—</div>
+      <div class="hero-stat-label">المعدل الفصلي</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-value" id="hero-hours">0</div>
+      <div class="hero-stat-label">الساعات المعتمدة</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-value" id="hero-cum">—</div>
+      <div class="hero-stat-label">التراكمي</div>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="layout">
+    <div>
+      <div class="sec-label">
+        <div class="sec-dot" id="tbl-dot" style="background:var(--gold)"></div>
+        <h2>المواد الدراسية</h2>
+        <span id="row-count">8 مواد</span>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:24px">#</th>
+                <th style="min-width:130px">اسم المادة</th>
+                <th style="min-width:78px">الدرجة %</th>
+                <th style="min-width:68px">الساعات</th>
+                <th style="min-width:56px">التقدير</th>
+                <th style="min-width:52px">النقاط</th>
+                <th style="width:28px"></th>
+              </tr>
+            </thead>
+            <tbody id="tbl-body"></tbody>
+          </table>
+        </div>
+        <button class="add-btn" onclick="addRow()">＋ إضافة مادة</button>
+        <p class="tbl-hint">أدخل الدرجة كنسبة مئوية من 0 إلى 100</p>
+      </div>
+    </div>
+
+    <div class="results-col">
+      <div class="sec-label">
+        <div class="sec-dot" style="background:var(--forest)"></div>
+        <h2>النتائج</h2>
+      </div>
+
+      <div class="gpa-box">
+        <div><span class="mode-pill pill-bach" id="mode-pill">بكالوريوس / دبلوم</span></div>
+        <div class="gpa-lbl">المعدل الفصلي GPA</div>
+        <div class="gpa-num" id="gpa-val">—</div>
+        <div><span class="gpa-letter" id="gpa-letter">أدخل درجاتك</span></div>
+        <div class="progress-wrap"><div class="progress-fill" id="gpa-bar" style="width:0%"></div></div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-lbl">الساعات المعتمدة</div>
+          <div class="stat-val val-hrs" id="tot-hours">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-lbl">مجموع النقاط</div>
+          <div class="stat-val val-pts" id="tot-points">0.00</div>
+        </div>
+      </div>
+
+      <div class="cum-box">
+        <h3>المعدل التراكمي</h3>
+        <div class="cum-field">
+          <label>معدلك التراكمي السابق</label>
+          <input type="number" id="prev-gpa" min="0" max="4" step="0.01" placeholder="0.00" oninput="calc()">
+        </div>
+        <div class="cum-field">
+          <label>الساعات المدروسة سابقاً</label>
+          <input type="number" id="prev-hours" min="0" step="1" placeholder="0" oninput="calc()">
+        </div>
+        <div class="cum-result cum-bach" id="cum-result">
+          <div class="cum-result-lbl">✦ المعدل التراكمي المتوقع</div>
+          <div class="cum-result-val" id="cum-val">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCALE -->
+  <div id="scale" class="scale-sec">
+    <div class="sec-label">
+      <div class="sec-dot" style="background:var(--crimson)"></div>
+      <h2>جدول التقديرات المعتمد</h2>
+    </div>
+    <div class="card" style="margin-top:0">
+      <div class="scale-tabs">
+        <button class="stab stab-bach on" id="stab-bach" onclick="switchTab('bach')">بكالوريوس / دبلوم</button>
+        <button class="stab stab-mast"    id="stab-mast" onclick="switchTab('mast')">ماجستير</button>
+      </div>
+      <div id="sg-bach" class="scale-grid"></div>
+      <div id="sg-mast" style="display:none">
+        <div class="diff-note">⚠️ <span>في الماجستير: تقديرات (ج-، د+، د) <strong>غير موجودة</strong>. أي درجة أقل من 70 تُعدّ <strong>هـ (راسب)</strong> مباشرةً. كما أن ج+ تبدأ من 75 بدلاً من 77.</span></div>
+        <div class="scale-grid" id="sg-mast-grid"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="f-name">د. سالم بن سعيد الحارثي</div>
+  <div class="f-div"></div>
+  <div class="f-copy">حقوق الملكية الفكرية محفوظة © جميع الحقوق محفوظة</div>
+</footer>
+
+<script>
+const MAPS = {
+  bach: [
+    {min:95, letter:'أ',   pts:4.0, cls:'g-a'},
+    {min:90, letter:'أ-',  pts:3.7, cls:'g-a'},
+    {min:87, letter:'ب+',  pts:3.3, cls:'g-b'},
+    {min:83, letter:'ب',   pts:3.0, cls:'g-b'},
+    {min:80, letter:'ب-',  pts:2.7, cls:'g-b'},
+    {min:77, letter:'ج+',  pts:2.3, cls:'g-c'},
+    {min:73, letter:'ج',   pts:2.0, cls:'g-c'},
+    {min:70, letter:'ج-',  pts:1.7, cls:'g-c'},
+    {min:65, letter:'د+',  pts:1.3, cls:'g-d'},
+    {min:60, letter:'د',   pts:1.0, cls:'g-d'},
+    {min:0,  letter:'هـ',  pts:0.0, cls:'g-f'},
+  ],
+  mast: [
+    {min:95, letter:'أ',   pts:4.0, cls:'g-a'},
+    {min:90, letter:'أ-',  pts:3.7, cls:'g-a'},
+    {min:87, letter:'ب+',  pts:3.3, cls:'g-b'},
+    {min:83, letter:'ب',   pts:3.0, cls:'g-b'},
+    {min:80, letter:'ب-',  pts:2.7, cls:'g-b'},
+    {min:75, letter:'ج+',  pts:2.3, cls:'g-c'},
+    {min:70, letter:'ج',   pts:2.0, cls:'g-c'},
+    {min:0,  letter:'هـ',  pts:0.0, cls:'g-f'},
+  ]
+};
+
+// Build scale grids
+function buildScale(map, id) {
+  const el = document.getElementById(id);
+  el.innerHTML = '';
+  map.forEach((g, i) => {
+    const prev = map[i-1];
+    const range = g.min === 0
+      ? `أقل من ${map[i-1]?.min ?? 60}`
+      : !prev ? `${g.min} – 100`
+      : `${g.min} – ${prev.min - 1}`;
+    el.innerHTML += `<div class="scale-item"><div class="s-range">${range}</div><div class="s-letter ${g.cls}">${g.letter}</div><div class="s-pts">${g.pts.toFixed(1)}</div></div>`;
+  });
+}
+buildScale(MAPS.bach, 'sg-bach');
+buildScale(MAPS.mast, 'sg-mast-grid');
+
+let mode = 'bach', rows = [], cnt = 0;
+
+function getGrade(score) {
+  if (isNaN(score) || score === '') return null;
+  for (const g of MAPS[mode]) if (score >= g.min) return g;
+  return MAPS[mode][MAPS[mode].length - 1];
+}
+
+// ── MODE ──
+function setMode(m) {
+  mode = m;
+  const isMast = m === 'mast';
+  document.body.classList.toggle('masters', isMast);
+  document.getElementById('btn-bach').className = 'mode-btn' + (!isMast ? ' active-bach' : '');
+  document.getElementById('btn-mast').className = 'mode-btn' + (isMast ? ' active-mast' : '');
+  const badge = document.getElementById('mode-badge');
+  badge.textContent = isMast ? 'نظام 4.0 — 8 تقديرات' : 'نظام 4.0 — 11 تقديراً';
+  badge.className = 'mode-badge ' + (isMast ? 'badge-mast' : 'badge-bach');
+  document.getElementById('hero-title').textContent = isMast ? 'الماجستير' : 'البكالوريوس';
+  document.getElementById('hero-desc').textContent = isMast
+    ? 'نظام التقدير الخاص بطلاب الماجستير — الحد الأدنى للنجاح 70% (ج)، وما دونها هـ مباشرةً'
+    : 'أدخل درجاتك وساعاتك المعتمدة لحساب معدلك الفصلي والتراكمي وفق نظام التقدير المعتمد رسمياً';
+  const pill = document.getElementById('mode-pill');
+  pill.textContent = isMast ? 'ماجستير' : 'بكالوريوس / دبلوم';
+  pill.className = 'mode-pill ' + (isMast ? 'pill-mast' : 'pill-bach');
+  switchTab(m);
+  calc();
+}
+
+function switchTab(t) {
+  document.getElementById('sg-bach').style.display    = t === 'bach' ? 'grid' : 'none';
+  document.getElementById('sg-mast').style.display    = t === 'mast' ? 'block' : 'none';
+  document.getElementById('stab-bach').className = 'stab stab-bach' + (t === 'bach' ? ' on' : '');
+  document.getElementById('stab-mast').className = 'stab stab-mast' + (t === 'mast' ? ' on' : '');
+}
+
+// ── ROWS ──
+function createRow(id, num) {
+  const tr = document.createElement('tr');
+  tr.id = 'r-' + id;
+  tr.innerHTML = `
+    <td class="row-num">${num}</td>
+    <td><input type="text" placeholder="اسم المادة" id="n-${id}"></td>
+    <td><input type="number" min="0" max="100" placeholder="—" id="s-${id}" oninput="calc()"></td>
+    <td><input type="number" min="1" max="6" value="3" id="h-${id}" oninput="calc()"></td>
+    <td><span class="grade-badge g-none" id="l-${id}">—</span></td>
+    <td><span class="pts-cell" id="p-${id}">—</span></td>
+    <td><button class="remove-btn" onclick="removeRow(${id})">✕</button></td>
+  `;
+  return tr;
+}
+
+function addRow() {
+  const id = ++cnt;
+  rows.push(id);
+  document.getElementById('tbl-body').appendChild(createRow(id, rows.length));
+  document.getElementById('row-count').textContent = rows.length + ' مواد';
+  calc();
+}
+
+function removeRow(id) {
+  rows = rows.filter(r => r !== id);
+  const tr = document.getElementById('r-' + id);
+  if (tr) {
+    Object.assign(tr.style, {opacity:'0', transform:'translateX(16px)', transition:'all .2s'});
+    setTimeout(() => { tr.remove(); renum(); calc(); }, 200);
+  }
+  document.getElementById('row-count').textContent = rows.length + ' مواد';
+}
+
+function renum() {
+  rows.forEach((id, i) => {
+    const c = document.querySelector(`#r-${id} .row-num`);
+    if (c) c.textContent = i + 1;
+  });
+}
+
+function pop(el) { el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); }
+
+// ── CALC ──
+function calc() {
+  let totH = 0, totP = 0;
+  rows.forEach(id => {
+    const sEl = document.getElementById('s-' + id);
+    const hEl = document.getElementById('h-' + id);
+    const lEl = document.getElementById('l-' + id);
+    const pEl = document.getElementById('p-' + id);
+    if (!sEl) return;
+    const score = parseFloat(sEl.value);
+    const hrs   = parseFloat(hEl?.value) || 0;
+    const grade = getGrade(score);
+    if (grade && hrs > 0 && !isNaN(score)) {
+      lEl.textContent = grade.letter; lEl.className = 'grade-badge ' + grade.cls;
+      const pts = grade.pts * hrs;
+      pEl.textContent = pts.toFixed(2);
+      totH += hrs; totP += pts;
+    } else {
+      if (lEl) { lEl.textContent = '—'; lEl.className = 'grade-badge g-none'; }
+      if (pEl) pEl.textContent = '—';
+    }
+  });
+
+  document.getElementById('tot-hours').textContent  = totH || 0;
+  document.getElementById('tot-points').textContent = totP > 0 ? totP.toFixed(2) : '0.00';
+  document.getElementById('hero-hours').textContent = totH;
+
+  const gpaEl = document.getElementById('gpa-val');
+  const ltrEl = document.getElementById('gpa-letter');
+  const barEl = document.getElementById('gpa-bar');
+  const heroG = document.getElementById('hero-gpa');
+
+  if (totH > 0) {
+    const gpa = totP / totH;
+    gpaEl.textContent = heroG.textContent = gpa.toFixed(2);
+    pop(gpaEl);
+    barEl.style.width = (gpa / 4 * 100) + '%';
+
+    let ltr = 'هـ';
+    if      (gpa >= 4.0) ltr = 'أ';
+    else if (gpa >= 3.7) ltr = 'أ-';
+    else if (gpa >= 3.3) ltr = 'ب+';
+    else if (gpa >= 3.0) ltr = 'ب';
+    else if (gpa >= 2.7) ltr = 'ب-';
+    else if (gpa >= 2.3) ltr = 'ج+';
+    else if (gpa >= 2.0) ltr = 'ج';
+    else if (mode === 'bach') {
+      if      (gpa >= 1.7) ltr = 'ج-';
+      else if (gpa >= 1.3) ltr = 'د+';
+      else if (gpa >= 1.0) ltr = 'د';
+    }
+    ltrEl.textContent = ltr;
+  } else {
+    gpaEl.textContent = heroG.textContent = '—';
+    ltrEl.textContent = 'أدخل درجاتك';
+    barEl.style.width = '0%';
+  }
+
+  // Cumulative
+  const prevGPA = parseFloat(document.getElementById('prev-gpa').value);
+  const prevH   = parseFloat(document.getElementById('prev-hours').value) || 0;
+  const cumEl   = document.getElementById('cum-result');
+  const cumVal  = document.getElementById('cum-val');
+  const heroCum = document.getElementById('hero-cum');
+  const isMast  = mode === 'mast';
+
+  cumEl.className = 'cum-result ' + (isMast ? 'cum-mast' : 'cum-bach');
+  if (!isNaN(prevGPA) && (totH + prevH) > 0 && totH > 0) {
+    const cumGPA = ((prevH * prevGPA) + totP) / (totH + prevH);
+    cumVal.textContent = heroCum.textContent = cumGPA.toFixed(2);
+    cumEl.classList.add('show');
+  } else {
+    cumEl.classList.remove('show');
+    heroCum.textContent = '—';
+  }
+}
+
+for (let i = 0; i < 8; i++) addRow();
+</script>
+</body>
+</html>
