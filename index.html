@@ -1,607 +1,465 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>حاسبة المعدل الجامعي | د. سالم الحارثي</title>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --cream: #faf8f3;
-    --ivory: #f4f1e8;
-    --paper: #fffef9;
-    --ink: #1a1612;
-    --ink-light: #3d3530;
-    --ink-muted: #7a6f65;
-    --ink-faint: #b5a99a;
-    --gold: #b8882a;
-    --gold-light: #d4a94a;
-    --gold-pale: #f5e9cc;
-    --forest: #2d5a3d;
-    --forest-light: #3d7a52;
-    --forest-pale: #e0efe5;
-    --crimson: #8b2a2a;
-    --crimson-pale: #f5e0e0;
-    --sky: #2a4a6b;
-    --sky-pale: #e0eaf5;
-    --border: #ddd5c8;
-    --shadow: rgba(26,22,18,0.08);
-    --radius: 12px;
-    --mode-accent: var(--gold);
-    --mode-accent-pale: var(--gold-pale);
-    --mode-accent-light: var(--gold-light);
-  }
-  body.masters {
-    --mode-accent: var(--forest);
-    --mode-accent-pale: var(--forest-pale);
-    --mode-accent-light: var(--forest-light);
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  html { scroll-behavior:smooth; }
-  body { font-family:'Cairo',sans-serif; background:var(--cream); color:var(--ink); min-height:100vh; overflow-x:hidden; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>حاسبة المعدل الجامعي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: #eff6ff;
+            --secondary: #6366f1;
+            --bg-main: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --radius-lg: 16px;
+            --radius-md: 12px;
+        }
 
-  /* NAV */
-  nav {
-    background:var(--paper); border-bottom:1px solid var(--border);
-    padding:0 2rem; position:sticky; top:0; z-index:100;
-    display:flex; align-items:center; justify-content:space-between;
-    height:64px; box-shadow:0 1px 12px var(--shadow);
-  }
-  .nav-brand { display:flex; align-items:center; gap:.75rem; }
-  .nav-logo {
-    width:36px; height:36px;
-    background:linear-gradient(135deg,var(--gold),var(--forest));
-    border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.1rem;
-  }
-  .nav-title { font-family:'Amiri',serif; font-size:1.15rem; font-weight:700; color:var(--ink); line-height:1.2; }
-  .nav-subtitle { font-size:.7rem; color:var(--ink-muted); }
-  .nav-links { display:flex; gap:.25rem; }
-  .nav-link {
-    padding:.4rem .9rem; border-radius:8px; font-size:.85rem; color:var(--ink-muted);
-    text-decoration:none; cursor:pointer; border:none; background:none;
-    font-family:'Cairo',sans-serif; transition:all .2s;
-  }
-  .nav-link:hover { background:var(--gold-pale); color:var(--gold); }
+        body.master-mode {
+            --primary: #7c3aed;
+            --primary-light: #f5f3ff;
+        }
 
-  /* MODE SWITCHER */
-  .mode-bar {
-    background:var(--ivory); border-bottom:1px solid var(--border);
-    padding:.85rem 2rem; display:flex; align-items:center;
-    justify-content:center; gap:1rem; flex-wrap:wrap;
-  }
-  .mode-label { font-size:.84rem; color:var(--ink-muted); font-weight:600; }
-  .mode-toggle {
-    display:flex; background:var(--paper); border:1px solid var(--border);
-    border-radius:100px; padding:4px; gap:4px;
-    box-shadow:0 1px 6px var(--shadow);
-  }
-  .mode-btn {
-    padding:.42rem 1.3rem; border-radius:100px; border:none; background:none;
-    font-family:'Cairo',sans-serif; font-size:.86rem; font-weight:600;
-    color:var(--ink-muted); cursor:pointer; transition:all .25s; white-space:nowrap;
-  }
-  .mode-btn.active-bach { background:linear-gradient(135deg,var(--gold),var(--gold-light)); color:#fff; box-shadow:0 2px 10px rgba(184,136,42,.35); }
-  .mode-btn.active-mast { background:linear-gradient(135deg,var(--forest),var(--forest-light)); color:#fff; box-shadow:0 2px 10px rgba(45,90,61,.35); }
-  .mode-badge {
-    display:inline-flex; align-items:center; gap:.4rem;
-    font-size:.76rem; padding:.28rem .85rem; border-radius:100px; border:1px solid; font-weight:600;
-    transition:all .3s;
-  }
-  .badge-bach { background:var(--gold-pale); border-color:rgba(184,136,42,.3); color:var(--gold); }
-  .badge-mast { background:var(--forest-pale); border-color:rgba(45,90,61,.3); color:var(--forest); }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
+        }
 
-  /* HERO */
-  .hero {
-    padding:3rem 2rem 2.5rem; text-align:center; position:relative; overflow:hidden;
-    background:linear-gradient(160deg,var(--paper) 0%,var(--ivory) 100%);
-    border-bottom:1px solid var(--border); animation:fadeDown .7s ease;
-  }
-  .hero::before {
-    content:''; position:absolute; top:-80px; right:-80px;
-    width:280px; height:280px;
-    background:radial-gradient(circle,rgba(184,136,42,.07) 0%,transparent 70%);
-    pointer-events:none; transition:opacity .4s;
-  }
-  body.masters .hero::before { background:radial-gradient(circle,rgba(45,90,61,.07) 0%,transparent 70%); }
-  .hero h1 { font-family:'Amiri',serif; font-size:2.8rem; font-weight:700; color:var(--ink); margin-bottom:.5rem; line-height:1.2; }
-  .hero h1 .accent { color:var(--mode-accent); transition:color .3s; }
-  .hero p { font-size:.94rem; color:var(--ink-muted); max-width:500px; margin:0 auto 1.8rem; line-height:1.7; }
-  .hero-stats {
-    display:inline-flex; background:var(--paper); border:1px solid var(--border);
-    border-radius:14px; box-shadow:0 2px 16px var(--shadow); overflow:hidden;
-  }
-  .hero-stat { text-align:center; padding:.9rem 1.6rem; }
-  .hero-stat + .hero-stat { border-right:1px solid var(--border); }
-  .hero-stat-value { font-family:'Amiri',serif; font-size:1.7rem; font-weight:700; color:var(--mode-accent); line-height:1; transition:color .3s; }
-  .hero-stat-label { font-size:.7rem; color:var(--ink-muted); margin-top:.2rem; }
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 40px;
+            transition: all 0.3s ease;
+        }
 
-  /* MAIN */
-  main { max-width:1100px; margin:0 auto; padding:2.5rem 1.5rem 4rem; }
-  .sec-label { display:flex; align-items:center; gap:.7rem; margin-bottom:1.2rem; }
-  .sec-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; transition:background .3s; }
-  .sec-label h2 { font-family:'Amiri',serif; font-size:1.25rem; color:var(--ink); }
-  .sec-label span { font-size:.77rem; color:var(--ink-muted); margin-right:.2rem; }
+        header {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+        }
 
-  .layout { display:grid; grid-template-columns:1fr 355px; gap:1.5rem; align-items:start; }
-  @media(max-width:760px) {
-    .layout { grid-template-columns:1fr; }
-    .hero h1 { font-size:2rem; }
-    nav { padding:0 1rem; }
-    .nav-links { display:none; }
-    .mode-bar { padding:.7rem 1rem; }
-  }
+        .logo-area { display: flex; align-items: center; gap: 12px; }
+        .logo-icon { background: var(--primary); color: white; width: 40px; height: 40px; border-radius: var(--radius-md); display: grid; place-items: center; }
+        .logo-text h1 { font-size: 1.1rem; font-weight: 800; }
+        
+        .mode-switcher {
+            background: var(--bg-main);
+            padding: 4px;
+            border-radius: 100px;
+            display: flex;
+            gap: 4px;
+            border: 1px solid var(--border);
+        }
 
-  /* CARD */
-  .card { background:var(--paper); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; box-shadow:0 2px 16px var(--shadow); animation:fadeUp .6s ease both; }
+        .mode-btn {
+            border: none; background: none; padding: 6px 16px; border-radius: 100px;
+            font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.3s; color: var(--text-muted);
+        }
 
-  /* TABLE */
-  .table-wrap { overflow-x:auto; }
-  table { width:100%; border-collapse:collapse; }
-  thead tr { border-bottom:2px solid var(--border); }
-  thead th { padding:.6rem .4rem .8rem; font-size:.75rem; color:var(--ink-muted); text-align:center; font-weight:700; letter-spacing:.02em; white-space:nowrap; }
-  tbody tr { border-bottom:1px solid rgba(221,213,200,.5); transition:background .15s; }
-  tbody tr:hover { background:var(--ivory); }
-  tbody tr:last-child { border-bottom:none; }
-  tbody td { padding:.32rem .3rem; text-align:center; }
-  .row-num { font-size:.72rem; color:var(--ink-faint); font-weight:600; width:24px; }
+        .mode-btn.active { background: var(--card-bg); color: var(--primary); box-shadow: var(--shadow-sm); }
 
-  input[type="text"], input[type="number"] {
-    background:var(--cream); border:1px solid var(--border); color:var(--ink);
-    border-radius:8px; padding:.42rem .55rem; font-family:'Cairo',sans-serif;
-    font-size:.83rem; width:100%; text-align:center;
-    transition:border-color .2s,box-shadow .2s,background .2s; outline:none;
-  }
-  input[type="text"] { text-align:right; }
-  input:focus { border-color:var(--mode-accent); background:var(--paper); box-shadow:0 0 0 3px rgba(184,136,42,.1); }
-  body.masters input:focus { box-shadow:0 0 0 3px rgba(45,90,61,.1); }
+        .container {
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
 
-  .grade-badge {
-    display:inline-flex; align-items:center; justify-content:center;
-    min-width:40px; padding:.22rem .45rem; border-radius:6px;
-    font-size:.8rem; font-weight:700; font-family:'Cairo',sans-serif;
-  }
-  .g-none { background:transparent; color:var(--ink-faint); }
-  .g-a    { background:var(--forest-pale); color:var(--forest); }
-  .g-b    { background:var(--sky-pale); color:var(--sky); }
-  .g-c    { background:var(--gold-pale); color:var(--gold); }
-  .g-d    { background:rgba(139,42,42,.08); color:var(--crimson); }
-  .g-f    { background:var(--crimson-pale); color:var(--crimson); }
+        .stats-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
 
-  .pts-cell { font-size:.8rem; font-weight:600; color:var(--ink-muted); }
-  .remove-btn { background:none; border:none; color:var(--ink-faint); cursor:pointer; font-size:.88rem; padding:.2rem .35rem; border-radius:4px; transition:all .15s; line-height:1; }
-  .remove-btn:hover { background:var(--crimson-pale); color:var(--crimson); }
-  .add-btn { width:100%; margin-top:.8rem; padding:.52rem; background:none; border:1px dashed var(--border); border-radius:8px; color:var(--ink-muted); font-family:'Cairo',sans-serif; font-size:.84rem; cursor:pointer; transition:all .2s; }
-  .add-btn:hover { border-color:var(--mode-accent); color:var(--mode-accent); background:var(--mode-accent-pale); }
-  .tbl-hint { font-size:.71rem; color:var(--ink-faint); text-align:center; margin-top:.4rem; }
+        .stat-card {
+            background: var(--card-bg);
+            padding: 1.25rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
 
-  /* RESULTS */
-  .results-col { display:flex; flex-direction:column; gap:1rem; }
+        .stat-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+        .stat-value { font-size: 1.8rem; font-weight: 800; color: var(--primary); font-variant-numeric: tabular-nums; }
 
-  .gpa-box {
-    border-radius:var(--radius); padding:1.8rem 1.5rem; text-align:center;
-    position:relative; overflow:hidden;
-    background:linear-gradient(160deg,var(--ink) 0%,var(--ink-light) 100%);
-    box-shadow:0 4px 24px rgba(26,22,18,.18); animation:fadeUp .65s ease both;
-  }
-  .mode-pill {
-    display:inline-block; font-size:.68rem; font-weight:700;
-    padding:.15rem .7rem; border-radius:100px; margin-bottom:.55rem; transition:all .3s;
-  }
-  .pill-bach { background:rgba(184,136,42,.2); color:var(--gold-light); border:1px solid rgba(184,136,42,.3); }
-  .pill-mast { background:rgba(45,90,61,.3); color:#7ecf97; border:1px solid rgba(63,185,80,.25); }
-  .gpa-lbl { font-size:.74rem; color:rgba(255,255,255,.45); letter-spacing:.07em; margin-bottom:.35rem; }
-  .gpa-num { font-family:'Amiri',serif; font-size:4.2rem; font-weight:700; line-height:1; color:var(--gold-light); margin-bottom:.4rem; transition:color .3s; }
-  body.masters .gpa-num { color:#7ecf97; }
-  .gpa-letter {
-    display:inline-block; font-size:1rem; font-weight:700; padding:.28rem 1.1rem; border-radius:100px;
-    background:rgba(184,136,42,.2); color:var(--gold-light); border:1px solid rgba(184,136,42,.3); transition:all .3s;
-  }
-  body.masters .gpa-letter { background:rgba(45,90,61,.3); color:#7ecf97; border-color:rgba(63,185,80,.3); }
-  .progress-wrap { height:4px; background:rgba(255,255,255,.1); border-radius:2px; margin-top:1rem; overflow:hidden; }
-  .progress-fill { height:100%; background:linear-gradient(90deg,var(--gold-light),#d4a94a); border-radius:2px; transition:width .45s ease; }
-  body.masters .progress-fill { background:linear-gradient(90deg,var(--forest),#7ecf97); }
+        .stat-card.featured { background: var(--primary); color: white; border: none; }
+        .stat-card.featured .stat-label { color: rgba(255,255,255,0.8); }
+        .stat-card.featured .stat-value { color: white; font-size: 2.2rem; }
 
-  .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; animation:fadeUp .7s ease both; }
-  .stat-box { background:var(--paper); border:1px solid var(--border); border-radius:10px; padding:1rem; text-align:center; box-shadow:0 1px 8px var(--shadow); }
-  .stat-lbl { font-size:.7rem; color:var(--ink-muted); margin-bottom:.25rem; }
-  .stat-val { font-family:'Amiri',serif; font-size:1.7rem; font-weight:700; line-height:1; }
-  .val-hrs { color:var(--sky); }
-  .val-pts { color:var(--mode-accent); transition:color .3s; }
+        .cum-inline-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+            flex-wrap: wrap;
+            box-shadow: var(--shadow-sm);
+        }
 
-  /* CUMULATIVE */
-  .cum-box { background:var(--paper); border:1px solid var(--border); border-radius:var(--radius); padding:1.3rem; box-shadow:0 2px 12px var(--shadow); animation:fadeUp .75s ease both; }
-  .cum-box h3 { font-family:'Amiri',serif; font-size:1rem; color:var(--ink); margin-bottom:1rem; display:flex; align-items:center; gap:.5rem; }
-  .cum-box h3::before { content:''; display:block; width:3px; height:14px; background:var(--mode-accent); border-radius:2px; transition:background .3s; }
-  .cum-field { display:flex; align-items:center; justify-content:space-between; gap:.8rem; margin-bottom:.7rem; }
-  .cum-field label { font-size:.78rem; color:var(--ink-muted); white-space:nowrap; flex-shrink:0; }
-  .cum-field input { max-width:90px; }
-  .cum-result { margin-top:1rem; padding:1rem; border-radius:10px; text-align:center; display:none; }
-  .cum-result.show { display:block; }
-  .cum-bach { background:linear-gradient(135deg,var(--gold-pale),rgba(184,136,42,.04)); border:1px solid rgba(184,136,42,.2); }
-  .cum-mast { background:linear-gradient(135deg,var(--forest-pale),rgba(45,90,61,.04)); border:1px solid rgba(45,90,61,.2); }
-  .cum-result-lbl { font-size:.73rem; margin-bottom:.25rem; }
-  .cum-bach .cum-result-lbl { color:var(--gold); }
-  .cum-mast .cum-result-lbl { color:var(--forest); }
-  .cum-result-val { font-family:'Amiri',serif; font-size:2.6rem; font-weight:700; line-height:1; }
-  .cum-bach .cum-result-val { color:var(--gold); }
-  .cum-mast .cum-result-val { color:var(--forest); }
+        .cum-section-title { display: flex; align-items: center; gap: 10px; min-width: 160px; }
+        .cum-section-title h3 { font-size: 0.95rem; font-weight: 700; color: var(--text-main); }
 
-  /* SCALE */
-  .scale-sec { margin-top:3rem; }
-  .scale-tabs { display:flex; gap:.5rem; margin-bottom:1.1rem; border-bottom:1px solid var(--border); padding-bottom:.8rem; }
-  .stab { padding:.38rem 1.1rem; border-radius:8px; border:1px solid var(--border); background:none; font-family:'Cairo',sans-serif; font-size:.82rem; color:var(--ink-muted); cursor:pointer; transition:all .2s; }
-  .stab-bach.on { background:var(--gold-pale); border-color:rgba(184,136,42,.4); color:var(--gold); font-weight:700; }
-  .stab-mast.on { background:var(--forest-pale); border-color:rgba(45,90,61,.3); color:var(--forest); font-weight:700; }
-  .scale-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(93px,1fr)); gap:.5rem; }
-  .scale-item { background:var(--paper); border:1px solid var(--border); border-radius:8px; padding:.6rem .4rem; text-align:center; transition:transform .15s,box-shadow .15s; }
-  .scale-item:hover { transform:translateY(-2px); box-shadow:0 4px 12px var(--shadow); }
-  .s-range { font-size:.69rem; color:var(--ink-muted); }
-  .s-letter { font-size:1.05rem; font-weight:700; margin:.13rem 0; font-family:'Amiri',serif; }
-  .s-pts { font-size:.69rem; font-weight:600; color:var(--ink-muted); }
-  .diff-note {
-    background:var(--forest-pale); border:1px solid rgba(45,90,61,.2); border-radius:10px;
-    padding:.8rem 1rem; font-size:.78rem; color:var(--forest);
-    margin-bottom:1rem; display:flex; align-items:flex-start; gap:.5rem; line-height:1.6;
-  }
+        .cum-inputs { display: flex; align-items: center; gap: 1.5rem; flex-grow: 1; }
+        .input-group-inline { display: flex; align-items: center; gap: 10px; }
+        .input-group-inline label { font-size: 0.85rem; color: var(--text-muted); white-space: nowrap; }
+        .input-group-inline .input-minimal { width: 100px; }
 
-  /* FOOTER */
-  footer { background:var(--ink); color:rgba(255,255,255,.45); text-align:center; padding:2rem; font-size:.82rem; }
-  .f-name { color:var(--gold-light); font-family:'Amiri',serif; font-size:1rem; font-weight:700; }
-  .f-div { width:40px; height:1px; background:rgba(184,136,42,.4); margin:.8rem auto; }
-  .f-copy { font-size:.71rem; opacity:.55; }
+        .cum-result-badge {
+            background: var(--primary-light);
+            padding: 0.5rem 1.25rem;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid var(--primary);
+            opacity: 0;
+            transform: translateY(10px);
+            transition: 0.3s;
+            pointer-events: none;
+        }
 
-  @keyframes fadeDown { from{opacity:0;transform:translateY(-24px)} to{opacity:1;transform:translateY(0)} }
-  @keyframes fadeUp   { from{opacity:0;transform:translateY(20px)}  to{opacity:1;transform:translateY(0)} }
-  @keyframes numPop   { 0%{transform:scale(1)} 50%{transform:scale(1.07)} 100%{transform:scale(1)} }
-  .pop { animation:numPop .25s ease; }
+        .cum-result-badge.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        .cum-result-badge span { font-size: 0.75rem; color: var(--primary); font-weight: 700; }
+        .cum-result-badge strong { font-size: 1.4rem; color: var(--primary); font-variant-numeric: tabular-nums; }
 
-  @media print { nav,.mode-bar,.add-btn,.remove-btn,.scale-sec,footer{display:none} .card,.gpa-box,.cum-box{box-shadow:none;border:1px solid #ccc} }
-</style>
+        @media (max-width: 768px) {
+            .cum-inline-card { flex-direction: column; align-items: stretch; gap: 1rem; }
+            .cum-inputs { flex-direction: column; align-items: stretch; gap: 1rem; }
+            .input-group-inline { justify-content: space-between; }
+            .input-group-inline .input-minimal { width: 120px; }
+        }
+
+        .main-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: var(--bg-main); padding: 12px 16px; font-size: 0.75rem; color: var(--text-muted); text-align: center; }
+        td { padding: 12px 16px; border-bottom: 1px solid var(--border); text-align: center; font-variant-numeric: tabular-nums; }
+
+        .input-minimal {
+            border: 1px solid transparent; background: var(--bg-main);
+            padding: 8px 12px; border-radius: var(--radius-md); font-size: 0.9rem; text-align: center;
+        }
+
+        .input-minimal:focus { outline: none; background: white; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+        .input-minimal.name { text-align: right; width: 100%; }
+
+        .grade-chip { padding: 4px 12px; border-radius: 100px; font-size: 0.8rem; font-weight: 700; display: inline-block; min-width: 45px; transition: 0.3s; }
+
+        .btn-add {
+            width: 100%; padding: 1.25rem; background: none; border: 2px dashed var(--border);
+            color: var(--primary); font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+
+        .btn-delete { color: var(--text-muted); background: none; border: none; cursor: pointer; padding: 5px; }
+        .btn-delete:hover { color: var(--danger); background: #fee2e2; border-radius: 50%; }
+
+        footer { text-align: center; padding: 2.5rem; color: var(--text-muted); font-size: 0.85rem; }
+        .animate-row { animation: fadeIn 0.2s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+    </style>
 </head>
 <body>
 
-<nav>
-  <div class="nav-brand">
-    <div class="nav-logo">🎓</div>
-    <div>
-      <div class="nav-title">حاسبة المعدل</div>
-      <div class="nav-subtitle">نظام محاسبة أكاديمية</div>
+<header>
+    <div class="logo-area">
+        <div class="logo-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3.33 2 8.67 2 12 0v-5"/></svg></div>
+        <div class="logo-text"><h1>حاسبة المعدل</h1></div>
     </div>
-  </div>
-  <div class="nav-links">
-    <a class="nav-link" href="#">الحاسبة</a>
-    <a class="nav-link" href="#scale">جدول التقديرات</a>
-    <button class="nav-link" onclick="window.print()">🖨 طباعة</button>
-  </div>
-</nav>
+    <div class="mode-switcher">
+        <button id="btn-b" class="mode-btn active" onclick="switchMode('B')">بكالوريوس</button>
+        <button id="btn-m" class="mode-btn" onclick="switchMode('M')">ماجستير</button>
+    </div>
+    <button onclick="window.print()" class="mode-btn" style="background: var(--bg-main)">🖨️ طباعة التقرير</button>
+</header>
 
-<div class="mode-bar">
-  <span class="mode-label">نوع البرنامج:</span>
-  <div class="mode-toggle">
-    <button class="mode-btn active-bach" id="btn-bach" onclick="setMode('bach')">🎓 بكالوريوس / دبلوم</button>
-    <button class="mode-btn" id="btn-mast" onclick="setMode('mast')">📚 ماجستير</button>
-  </div>
-  <span class="mode-badge badge-bach" id="mode-badge">نظام 4.0 — 11 تقديراً</span>
+<div class="container">
+    <div class="stats-dashboard">
+        <div class="stat-card featured">
+            <span class="stat-label">المعدل الفصلي</span>
+            <span class="stat-value" id="current-gpa">0.00</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">إجمالي الساعات</span>
+            <span class="stat-value" id="total-hours">0</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">إجمالي النقاط</span>
+            <span class="stat-value" id="total-points">0.00</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">التقدير العام</span>
+            <span class="stat-value" id="current-grade" style="font-size: 1.1rem;">—</span>
+        </div>
+    </div>
+
+    <div class="cum-inline-card">
+        <div class="cum-section-title">
+            <span>📈</span>
+            <h3>المعدل التراكمي</h3>
+        </div>
+        <div class="cum-inputs">
+            <div class="input-group-inline">
+                <label>المعدل السابق</label>
+                <input type="number" id="prev-gpa" class="input-minimal" placeholder="0.00" step="0.01" oninput="updateCurrentState(); calculateAll()">
+            </div>
+            <div class="input-group-inline">
+                <label>الساعات السابقة</label>
+                <input type="number" id="prev-hours" class="input-minimal" placeholder="0" oninput="updateCurrentState(); calculateAll()">
+            </div>
+        </div>
+        <div id="cum-result-box" class="cum-result-badge">
+            <span>التراكمي المتوقع</span>
+            <strong id="final-cum-gpa">0.00</strong>
+        </div>
+    </div>
+
+    <div class="main-card">
+        <div class="card-header">
+            <h2 id="table-title">المواد الدراسية (بكالوريوس)</h2>
+            <span id="course-count" style="font-size: 0.8rem; color: var(--text-muted);">0 مواد</span>
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th width="60">#</th>
+                        <th style="text-align: right;">المادة</th>
+                        <th width="120">الدرجة</th>
+                        <th width="120">الساعات</th>
+                        <th width="120">التقدير</th>
+                        <th width="120">النقاط</th>
+                        <th width="60"></th>
+                    </tr>
+                </thead>
+                <tbody id="course-body"></tbody>
+            </table>
+        </div>
+        <button class="btn-add" onclick="addNewRow()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            إضافة مادة جديدة في هذا الفصل
+        </button>
+    </div>
 </div>
-
-<div class="hero">
-  <h1>حاسبة <span class="accent" id="hero-title">البكالوريوس</span></h1>
-  <p id="hero-desc">أدخل درجاتك وساعاتك المعتمدة لحساب معدلك الفصلي والتراكمي وفق نظام التقدير المعتمد رسمياً</p>
-  <div class="hero-stats">
-    <div class="hero-stat">
-      <div class="hero-stat-value" id="hero-gpa">—</div>
-      <div class="hero-stat-label">المعدل الفصلي</div>
-    </div>
-    <div class="hero-stat">
-      <div class="hero-stat-value" id="hero-hours">0</div>
-      <div class="hero-stat-label">الساعات المعتمدة</div>
-    </div>
-    <div class="hero-stat">
-      <div class="hero-stat-value" id="hero-cum">—</div>
-      <div class="hero-stat-label">التراكمي</div>
-    </div>
-  </div>
-</div>
-
-<main>
-  <div class="layout">
-    <div>
-      <div class="sec-label">
-        <div class="sec-dot" id="tbl-dot" style="background:var(--gold)"></div>
-        <h2>المواد الدراسية</h2>
-        <span id="row-count">8 مواد</span>
-      </div>
-      <div class="card">
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:24px">#</th>
-                <th style="min-width:130px">اسم المادة</th>
-                <th style="min-width:78px">الدرجة %</th>
-                <th style="min-width:68px">الساعات</th>
-                <th style="min-width:56px">التقدير</th>
-                <th style="min-width:52px">النقاط</th>
-                <th style="width:28px"></th>
-              </tr>
-            </thead>
-            <tbody id="tbl-body"></tbody>
-          </table>
-        </div>
-        <button class="add-btn" onclick="addRow()">＋ إضافة مادة</button>
-        <p class="tbl-hint">أدخل الدرجة كنسبة مئوية من 0 إلى 100</p>
-      </div>
-    </div>
-
-    <div class="results-col">
-      <div class="sec-label">
-        <div class="sec-dot" style="background:var(--forest)"></div>
-        <h2>النتائج</h2>
-      </div>
-
-      <div class="gpa-box">
-        <div><span class="mode-pill pill-bach" id="mode-pill">بكالوريوس / دبلوم</span></div>
-        <div class="gpa-lbl">المعدل الفصلي GPA</div>
-        <div class="gpa-num" id="gpa-val">—</div>
-        <div><span class="gpa-letter" id="gpa-letter">أدخل درجاتك</span></div>
-        <div class="progress-wrap"><div class="progress-fill" id="gpa-bar" style="width:0%"></div></div>
-      </div>
-
-      <div class="stats-grid">
-        <div class="stat-box">
-          <div class="stat-lbl">الساعات المعتمدة</div>
-          <div class="stat-val val-hrs" id="tot-hours">0</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-lbl">مجموع النقاط</div>
-          <div class="stat-val val-pts" id="tot-points">0.00</div>
-        </div>
-      </div>
-
-      <div class="cum-box">
-        <h3>المعدل التراكمي</h3>
-        <div class="cum-field">
-          <label>معدلك التراكمي السابق</label>
-          <input type="number" id="prev-gpa" min="0" max="4" step="0.01" placeholder="0.00" oninput="calc()">
-        </div>
-        <div class="cum-field">
-          <label>الساعات المدروسة سابقاً</label>
-          <input type="number" id="prev-hours" min="0" step="1" placeholder="0" oninput="calc()">
-        </div>
-        <div class="cum-result cum-bach" id="cum-result">
-          <div class="cum-result-lbl">✦ المعدل التراكمي المتوقع</div>
-          <div class="cum-result-val" id="cum-val">—</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- SCALE -->
-  <div id="scale" class="scale-sec">
-    <div class="sec-label">
-      <div class="sec-dot" style="background:var(--crimson)"></div>
-      <h2>جدول التقديرات المعتمد</h2>
-    </div>
-    <div class="card" style="margin-top:0">
-      <div class="scale-tabs">
-        <button class="stab stab-bach on" id="stab-bach" onclick="switchTab('bach')">بكالوريوس / دبلوم</button>
-        <button class="stab stab-mast"    id="stab-mast" onclick="switchTab('mast')">ماجستير</button>
-      </div>
-      <div id="sg-bach" class="scale-grid"></div>
-      <div id="sg-mast" style="display:none">
-        <div class="diff-note">⚠️ <span>في الماجستير: تقديرات (ج-، د+، د) <strong>غير موجودة</strong>. أي درجة أقل من 70 تُعدّ <strong>هـ (راسب)</strong> مباشرةً. كما أن ج+ تبدأ من 75 بدلاً من 77.</span></div>
-        <div class="scale-grid" id="sg-mast-grid"></div>
-      </div>
-    </div>
-  </div>
-</main>
 
 <footer>
-  <div class="f-name">د. سالم بن سعيد الحارثي</div>
-  <div class="f-div"></div>
-  <div class="f-copy">حقوق الملكية الفكرية محفوظة © جميع الحقوق محفوظة</div>
+    <p>تطوير: <strong>د. سالم بن سعيد الحارثي</strong></p>
 </footer>
 
 <script>
-const MAPS = {
-  bach: [
-    {min:95, letter:'أ',   pts:4.0, cls:'g-a'},
-    {min:90, letter:'أ-',  pts:3.7, cls:'g-a'},
-    {min:87, letter:'ب+',  pts:3.3, cls:'g-b'},
-    {min:83, letter:'ب',   pts:3.0, cls:'g-b'},
-    {min:80, letter:'ب-',  pts:2.7, cls:'g-b'},
-    {min:77, letter:'ج+',  pts:2.3, cls:'g-c'},
-    {min:73, letter:'ج',   pts:2.0, cls:'g-c'},
-    {min:70, letter:'ج-',  pts:1.7, cls:'g-c'},
-    {min:65, letter:'د+',  pts:1.3, cls:'g-d'},
-    {min:60, letter:'د',   pts:1.0, cls:'g-d'},
-    {min:0,  letter:'هـ',  pts:0.0, cls:'g-f'},
-  ],
-  mast: [
-    {min:95, letter:'أ',   pts:4.0, cls:'g-a'},
-    {min:90, letter:'أ-',  pts:3.7, cls:'g-a'},
-    {min:87, letter:'ب+',  pts:3.3, cls:'g-b'},
-    {min:83, letter:'ب',   pts:3.0, cls:'g-b'},
-    {min:80, letter:'ب-',  pts:2.7, cls:'g-b'},
-    {min:75, letter:'ج+',  pts:2.3, cls:'g-c'},
-    {min:70, letter:'ج',   pts:2.0, cls:'g-c'},
-    {min:0,  letter:'هـ',  pts:0.0, cls:'g-f'},
-  ]
-};
+    const GRADE_SYSTEM = {
+        B: [
+            { min: 95, label: 'أ', points: 4.0, color: '#10b981' },
+            { min: 90, label: 'أ-', points: 3.7, color: '#10b981' },
+            { min: 87, label: 'ب+', points: 3.3, color: '#3b82f6' },
+            { min: 83, label: 'ب', points: 3.0, color: '#3b82f6' },
+            { min: 80, label: 'ب-', points: 2.7, color: '#3b82f6' },
+            { min: 77, label: 'ج+', points: 2.3, color: '#f59e0b' },
+            { min: 73, label: 'ج', points: 2.0, color: '#f59e0b' },
+            { min: 70, label: 'ج-', points: 1.7, color: '#f59e0b' },
+            { min: 65, label: 'د+', points: 1.3, color: '#ef4444' },
+            { min: 60, label: 'د', points: 1.0, color: '#ef4444' },
+            { min: 0, label: 'هـ', points: 0.0, color: '#ef4444' }
+        ],
+        M: [
+            { min: 95, label: 'أ', points: 4.0, color: '#10b981' },
+            { min: 90, label: 'أ-', points: 3.7, color: '#10b981' },
+            { min: 87, label: 'ب+', points: 3.3, color: '#3b82f6' },
+            { min: 83, label: 'ب', points: 3.0, color: '#3b82f6' },
+            { min: 80, label: 'ب-', points: 2.7, color: '#3b82f6' },
+            { min: 75, label: 'ج+', points: 2.3, color: '#f59e0b' },
+            { min: 70, label: 'ج', points: 2.0, color: '#f59e0b' },
+            { min: 0, label: 'هـ', points: 0.0, color: '#ef4444' }
+        ]
+    };
 
-// Build scale grids
-function buildScale(map, id) {
-  const el = document.getElementById(id);
-  el.innerHTML = '';
-  map.forEach((g, i) => {
-    const prev = map[i-1];
-    const range = g.min === 0
-      ? `أقل من ${map[i-1]?.min ?? 60}`
-      : !prev ? `${g.min} – 100`
-      : `${g.min} – ${prev.min - 1}`;
-    el.innerHTML += `<div class="scale-item"><div class="s-range">${range}</div><div class="s-letter ${g.cls}">${g.letter}</div><div class="s-pts">${g.pts.toFixed(1)}</div></div>`;
-  });
-}
-buildScale(MAPS.bach, 'sg-bach');
-buildScale(MAPS.mast, 'sg-mast-grid');
+    let appState = {
+        currentMode: 'B',
+        B: { courses: [{id:1, name:'', grade:'', hours:3}, {id:2, name:'', grade:'', hours:3}], prevGpa:'', prevHours:'' },
+        M: { courses: [{id:101, name:'', grade:'', hours:3}, {id:102, name:'', grade:'', hours:3}], prevGpa:'', prevHours:'' }
+    };
 
-let mode = 'bach', rows = [], cnt = 0;
-
-function getGrade(score) {
-  if (isNaN(score) || score === '') return null;
-  for (const g of MAPS[mode]) if (score >= g.min) return g;
-  return MAPS[mode][MAPS[mode].length - 1];
-}
-
-// ── MODE ──
-function setMode(m) {
-  mode = m;
-  const isMast = m === 'mast';
-  document.body.classList.toggle('masters', isMast);
-  document.getElementById('btn-bach').className = 'mode-btn' + (!isMast ? ' active-bach' : '');
-  document.getElementById('btn-mast').className = 'mode-btn' + (isMast ? ' active-mast' : '');
-  const badge = document.getElementById('mode-badge');
-  badge.textContent = isMast ? 'نظام 4.0 — 8 تقديرات' : 'نظام 4.0 — 11 تقديراً';
-  badge.className = 'mode-badge ' + (isMast ? 'badge-mast' : 'badge-bach');
-  document.getElementById('hero-title').textContent = isMast ? 'الماجستير' : 'البكالوريوس';
-  document.getElementById('hero-desc').textContent = isMast
-    ? 'نظام التقدير الخاص بطلاب الماجستير — الحد الأدنى للنجاح 70% (ج)، وما دونها هـ مباشرةً'
-    : 'أدخل درجاتك وساعاتك المعتمدة لحساب معدلك الفصلي والتراكمي وفق نظام التقدير المعتمد رسمياً';
-  const pill = document.getElementById('mode-pill');
-  pill.textContent = isMast ? 'ماجستير' : 'بكالوريوس / دبلوم';
-  pill.className = 'mode-pill ' + (isMast ? 'pill-mast' : 'pill-bach');
-  switchTab(m);
-  calc();
-}
-
-function switchTab(t) {
-  document.getElementById('sg-bach').style.display    = t === 'bach' ? 'grid' : 'none';
-  document.getElementById('sg-mast').style.display    = t === 'mast' ? 'block' : 'none';
-  document.getElementById('stab-bach').className = 'stab stab-bach' + (t === 'bach' ? ' on' : '');
-  document.getElementById('stab-mast').className = 'stab stab-mast' + (t === 'mast' ? ' on' : '');
-}
-
-// ── ROWS ──
-function createRow(id, num) {
-  const tr = document.createElement('tr');
-  tr.id = 'r-' + id;
-  tr.innerHTML = `
-    <td class="row-num">${num}</td>
-    <td><input type="text" placeholder="اسم المادة" id="n-${id}"></td>
-    <td><input type="number" min="0" max="100" placeholder="—" id="s-${id}" oninput="calc()"></td>
-    <td><input type="number" min="1" max="6" value="3" id="h-${id}" oninput="calc()"></td>
-    <td><span class="grade-badge g-none" id="l-${id}">—</span></td>
-    <td><span class="pts-cell" id="p-${id}">—</span></td>
-    <td><button class="remove-btn" onclick="removeRow(${id})">✕</button></td>
-  `;
-  return tr;
-}
-
-function addRow() {
-  const id = ++cnt;
-  rows.push(id);
-  document.getElementById('tbl-body').appendChild(createRow(id, rows.length));
-  document.getElementById('row-count').textContent = rows.length + ' مواد';
-  calc();
-}
-
-function removeRow(id) {
-  rows = rows.filter(r => r !== id);
-  const tr = document.getElementById('r-' + id);
-  if (tr) {
-    Object.assign(tr.style, {opacity:'0', transform:'translateX(16px)', transition:'all .2s'});
-    setTimeout(() => { tr.remove(); renum(); calc(); }, 200);
-  }
-  document.getElementById('row-count').textContent = rows.length + ' مواد';
-}
-
-function renum() {
-  rows.forEach((id, i) => {
-    const c = document.querySelector(`#r-${id} .row-num`);
-    if (c) c.textContent = i + 1;
-  });
-}
-
-function pop(el) { el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); }
-
-// ── CALC ──
-function calc() {
-  let totH = 0, totP = 0;
-  rows.forEach(id => {
-    const sEl = document.getElementById('s-' + id);
-    const hEl = document.getElementById('h-' + id);
-    const lEl = document.getElementById('l-' + id);
-    const pEl = document.getElementById('p-' + id);
-    if (!sEl) return;
-    const score = parseFloat(sEl.value);
-    const hrs   = parseFloat(hEl?.value) || 0;
-    const grade = getGrade(score);
-    if (grade && hrs > 0 && !isNaN(score)) {
-      lEl.textContent = grade.letter; lEl.className = 'grade-badge ' + grade.cls;
-      const pts = grade.pts * hrs;
-      pEl.textContent = pts.toFixed(2);
-      totH += hrs; totP += pts;
-    } else {
-      if (lEl) { lEl.textContent = '—'; lEl.className = 'grade-badge g-none'; }
-      if (pEl) pEl.textContent = '—';
+    function switchMode(m) {
+        if (appState.currentMode === m) return;
+        updateCurrentState();
+        appState.currentMode = m;
+        document.body.className = m === 'M' ? 'master-mode' : '';
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(m === 'B' ? 'btn-b' : 'btn-m').classList.add('active');
+        document.getElementById('table-title').innerText = `المواد الدراسية (${m === 'B' ? 'بكالوريوس' : 'ماجستير'})`;
+        renderTable();
+        loadInputs();
+        calculateAll();
     }
-  });
 
-  document.getElementById('tot-hours').textContent  = totH || 0;
-  document.getElementById('tot-points').textContent = totP > 0 ? totP.toFixed(2) : '0.00';
-  document.getElementById('hero-hours').textContent = totH;
-
-  const gpaEl = document.getElementById('gpa-val');
-  const ltrEl = document.getElementById('gpa-letter');
-  const barEl = document.getElementById('gpa-bar');
-  const heroG = document.getElementById('hero-gpa');
-
-  if (totH > 0) {
-    const gpa = totP / totH;
-    gpaEl.textContent = heroG.textContent = gpa.toFixed(2);
-    pop(gpaEl);
-    barEl.style.width = (gpa / 4 * 100) + '%';
-
-    let ltr = 'هـ';
-    if      (gpa >= 4.0) ltr = 'أ';
-    else if (gpa >= 3.7) ltr = 'أ-';
-    else if (gpa >= 3.3) ltr = 'ب+';
-    else if (gpa >= 3.0) ltr = 'ب';
-    else if (gpa >= 2.7) ltr = 'ب-';
-    else if (gpa >= 2.3) ltr = 'ج+';
-    else if (gpa >= 2.0) ltr = 'ج';
-    else if (mode === 'bach') {
-      if      (gpa >= 1.7) ltr = 'ج-';
-      else if (gpa >= 1.3) ltr = 'د+';
-      else if (gpa >= 1.0) ltr = 'د';
+    function updateCurrentState() {
+        const mode = appState.currentMode;
+        appState[mode].prevGpa = document.getElementById('prev-gpa').value;
+        appState[mode].prevHours = document.getElementById('prev-hours').value;
+        const rows = document.querySelectorAll('#course-body tr');
+        appState[mode].courses = Array.from(rows).map(row => ({
+            id: row.id.split('-')[1],
+            name: row.querySelector('.name').value,
+            grade: row.querySelector('.grade-input').value,
+            hours: row.querySelector('.hour-input').value
+        }));
     }
-    ltrEl.textContent = ltr;
-  } else {
-    gpaEl.textContent = heroG.textContent = '—';
-    ltrEl.textContent = 'أدخل درجاتك';
-    barEl.style.width = '0%';
-  }
 
-  // Cumulative
-  const prevGPA = parseFloat(document.getElementById('prev-gpa').value);
-  const prevH   = parseFloat(document.getElementById('prev-hours').value) || 0;
-  const cumEl   = document.getElementById('cum-result');
-  const cumVal  = document.getElementById('cum-val');
-  const heroCum = document.getElementById('hero-cum');
-  const isMast  = mode === 'mast';
+    function renderTable() {
+        const tbody = document.getElementById('course-body');
+        tbody.innerHTML = '';
+        appState[appState.currentMode].courses.forEach(c => injectRowToUI(c.id, c.name, c.grade, c.hours));
+        updateIndices();
+    }
 
-  cumEl.className = 'cum-result ' + (isMast ? 'cum-mast' : 'cum-bach');
-  if (!isNaN(prevGPA) && (totH + prevH) > 0 && totH > 0) {
-    const cumGPA = ((prevH * prevGPA) + totP) / (totH + prevH);
-    cumVal.textContent = heroCum.textContent = cumGPA.toFixed(2);
-    cumEl.classList.add('show');
-  } else {
-    cumEl.classList.remove('show');
-    heroCum.textContent = '—';
-  }
-}
+    function loadInputs() {
+        const data = appState[appState.currentMode];
+        document.getElementById('prev-gpa').value = data.prevGpa;
+        document.getElementById('prev-hours').value = data.prevHours;
+    }
 
-for (let i = 0; i < 8; i++) addRow();
+    function addNewRow() {
+        const id = Date.now();
+        injectRowToUI(id, '', '', 3);
+        updateIndices();
+        updateCurrentState();
+    }
+
+    function injectRowToUI(id, name, grade, hours) {
+        const tbody = document.getElementById('course-body');
+        const tr = document.createElement('tr');
+        tr.id = `row-${id}`;
+        tr.className = 'animate-row';
+        tr.innerHTML = `
+            <td class="row-index"></td>
+            <td><input type="text" class="input-minimal name" placeholder="اسم المادة" value="${name}" oninput="updateCurrentState()"></td>
+            <td><input type="number" class="input-minimal grade-input" placeholder="0" min="0" max="100" value="${grade}" oninput="updateCurrentState(); calculateAll()"></td>
+            <td><input type="number" class="input-minimal hour-input" min="1" value="${hours}" oninput="updateCurrentState(); calculateAll()"></td>
+            <td><span class="grade-chip">—</span></td>
+            <td><span class="points-val">0.00</span></td>
+            <td><button class="btn-delete" onclick="removeRow(${id})">✕</button></td>
+        `;
+        tbody.appendChild(tr);
+        if(grade !== "") calculateAll();
+    }
+
+    function removeRow(id) {
+        document.getElementById(`row-${id}`).remove();
+        updateIndices();
+        updateCurrentState();
+        calculateAll();
+    }
+
+    function updateIndices() {
+        const rows = document.querySelectorAll('.row-index');
+        rows.forEach((td, i) => td.innerText = (i + 1));
+        document.getElementById('course-count').innerText = `${rows.length} مواد`;
+    }
+
+    function calculateAll() {
+        let tH = 0, tP = 0;
+        document.querySelectorAll('#course-body tr').forEach(row => {
+            const gradeInput = row.querySelector('.grade-input').value;
+            const hr = parseFloat(row.querySelector('.hour-input').value) || 0;
+            const chip = row.querySelector('.grade-chip');
+            const pt = row.querySelector('.points-val');
+
+            if (gradeInput.trim() === "") {
+                chip.innerText = '—'; chip.style.backgroundColor = '#f1f5f9'; chip.style.color = '#64748b'; pt.innerText = '0.00'; return;
+            }
+
+            const sc = parseFloat(gradeInput);
+            const system = GRADE_SYSTEM[appState.currentMode];
+            const g = system.find(x => sc >= x.min) || system[system.length - 1];
+
+            if (g && hr > 0) {
+                chip.innerText = g.label;
+                chip.style.backgroundColor = g.color + '20';
+                chip.style.color = g.color;
+                const p = g.points * hr;
+                pt.innerText = p.toFixed(2);
+                tH += hr; tP += p;
+            }
+        });
+
+        document.getElementById('current-gpa').innerText = (tH > 0 ? (tP / tH) : 0).toFixed(2);
+        document.getElementById('total-hours').innerText = tH;
+        document.getElementById('total-points').innerText = tP.toFixed(2);
+
+        let gpa = tH > 0 ? (tP / tH) : 0;
+        let txt = '—';
+        if (tH > 0) {
+            if (appState.currentMode === 'M') {
+                if (gpa >= 3.75) txt = 'امتياز';
+                else if (gpa >= 3.00) txt = 'جيد جداً';
+                else if (gpa >= 2.50) txt = 'جيد (مرضي)';
+                else txt = 'ضعيف (تحت الملاحظة)';
+            } else {
+                if (gpa >= 3.50) txt = 'امتياز';
+                else if (gpa >= 3.00) txt = 'جيد جداً';
+                else if (gpa >= 2.50) txt = 'جيد';
+                else if (gpa >= 2.00) txt = 'مقبول';
+                else txt = 'ضعيف (رسوب)';
+            }
+        }
+        document.getElementById('current-grade').innerText = txt;
+
+        const pg = parseFloat(document.getElementById('prev-gpa').value);
+        const ph = parseFloat(document.getElementById('prev-hours').value) || 0;
+        const resultBadge = document.getElementById('cum-result-box');
+        
+        if (!isNaN(pg) && (tH + ph) > 0) {
+            document.getElementById('final-cum-gpa').innerText = (((pg * ph) + tP) / (tH + ph)).toFixed(2);
+            resultBadge.classList.add('show');
+        } else {
+            resultBadge.classList.remove('show');
+        }
+    }
+
+    window.onload = () => { renderTable(); calculateAll(); };
 </script>
 </body>
 </html>
