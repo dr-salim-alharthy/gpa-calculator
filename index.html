@@ -3,220 +3,316 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>حاسبة المعدل الجامعي</title>
+    <title>حاسبة المعدل الجامعي - تجربة Apple</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-light: #eff6ff;
-            --secondary: #6366f1;
-            --bg-main: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --border: #e2e8f0;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-            --radius-lg: 16px;
-            --radius-md: 12px;
+            /* Apple Color Palette */
+            --bg-color: #F5F5F7;
+            --card-bg: rgba(255, 255, 255, 0.8);
+            --primary: #0071E3;
+            --primary-gradient: linear-gradient(135deg, #0071E3, #00B4DB);
+            --master-primary: #5E5CE6;
+            --master-gradient: linear-gradient(135deg, #5E5CE6, #AF52DE);
+            --text-main: #1D1D1F;
+            --text-muted: #86868B;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            
+            --radius-xl: 20px;
+            --radius-lg: 14px;
+            --radius-md: 10px;
+            
+            --spring-easing: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body.master-mode {
-            --primary: #7c3aed;
-            --primary-light: #f5f3ff;
+            --primary: var(--master-primary);
+            --primary-gradient: var(--master-gradient);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Tajawal', sans-serif;
+            font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
 
         body {
-            background-color: var(--bg-main);
+            background-color: var(--bg-color);
             color: var(--text-main);
-            line-height: 1.6;
             min-height: 100vh;
-            padding-bottom: 40px;
-            transition: all 0.3s ease;
+            padding-bottom: 50px;
+            transition: background-color 0.5s var(--spring-easing);
         }
 
+        /* --- Header: Frosted Glass --- */
         header {
-            background: var(--card-bg);
-            border-bottom: 1px solid var(--border);
-            padding: 1rem 2rem;
+            background: var(--glass-bg);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            border-bottom: 0.5px solid var(--border-color);
+            padding: 0.8rem 2rem;
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: var(--shadow-sm);
         }
 
         .logo-area { display: flex; align-items: center; gap: 12px; }
-        .logo-icon { background: var(--primary); color: white; width: 40px; height: 40px; border-radius: var(--radius-md); display: grid; place-items: center; }
-        .logo-text h1 { font-size: 1.1rem; font-weight: 800; }
+        .logo-icon { 
+            background: var(--primary-gradient);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            display: grid;
+            place-items: center;
+            box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
+            transition: transform 0.3s ease;
+        }
+        .logo-icon:hover { transform: rotate(-5deg) scale(1.1); }
+        .logo-text h1 { font-size: 1rem; font-weight: 700; letter-spacing: -0.02em; }
         
+        /* Mode Switcher: Apple Style */
         .mode-switcher {
-            background: var(--bg-main);
-            padding: 4px;
-            border-radius: 100px;
+            background: rgba(120, 120, 128, 0.12);
+            padding: 3px;
+            border-radius: 12px;
             display: flex;
-            gap: 4px;
-            border: 1px solid var(--border);
+            gap: 2px;
         }
 
         .mode-btn {
-            border: none; background: none; padding: 6px 16px; border-radius: 100px;
-            font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.3s; color: var(--text-muted);
+            border: none;
+            background: none;
+            padding: 6px 16px;
+            border-radius: 9px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.25s var(--spring-easing);
+            color: var(--text-muted);
         }
 
-        .mode-btn.active { background: var(--card-bg); color: var(--primary); box-shadow: var(--shadow-sm); }
+        .mode-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
 
         .container {
-            max-width: 1100px;
+            max-width: 1000px;
             margin: 2rem auto;
             padding: 0 1.5rem;
             display: grid;
-            grid-template-columns: 1fr;
             gap: 1.5rem;
         }
 
+        /* --- Dashboard Stats --- */
         .stats-dashboard {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 0.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.2rem;
         }
 
         .stat-card {
-            background: var(--card-bg);
-            padding: 1.25rem;
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border);
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--radius-xl);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .stat-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
-        .stat-value { font-size: 1.8rem; font-weight: 800; color: var(--primary); font-variant-numeric: tabular-nums; }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
 
-        .stat-card.featured { background: var(--primary); color: white; border: none; }
-        .stat-card.featured .stat-label { color: rgba(255,255,255,0.8); }
-        .stat-card.featured .stat-value { color: white; font-size: 2.2rem; }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
+        .stat-value { font-size: 1.8rem; font-weight: 800; color: var(--text-main); font-variant-numeric: tabular-nums; }
 
+        .stat-card.featured {
+            background: var(--primary-gradient);
+            color: white;
+        }
+        .stat-card.featured .stat-label { color: rgba(255, 255, 255, 0.7); }
+        .stat-card.featured .stat-value { color: white; font-size: 2.4rem; line-height: 1; }
+
+        /* --- Cumulative Inline Bar --- */
         .cum-inline-card {
             background: var(--card-bg);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border);
-            padding: 1rem 1.5rem;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-color);
+            padding: 1.2rem 1.8rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 2rem;
+            gap: 1.5rem;
             flex-wrap: wrap;
-            box-shadow: var(--shadow-sm);
         }
 
-        .cum-section-title { display: flex; align-items: center; gap: 10px; min-width: 160px; }
-        .cum-section-title h3 { font-size: 0.95rem; font-weight: 700; color: var(--text-main); }
+        .cum-inputs {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
 
-        .cum-inputs { display: flex; align-items: center; gap: 1.5rem; flex-grow: 1; }
-        .input-group-inline { display: flex; align-items: center; gap: 10px; }
-        .input-group-inline label { font-size: 0.85rem; color: var(--text-muted); white-space: nowrap; }
-        .input-group-inline .input-minimal { width: 100px; }
+        .input-group-inline {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .input-group-inline label { font-size: 0.7rem; color: var(--text-muted); font-weight: 700; }
+        
+        .input-apple {
+            background: rgba(120, 120, 128, 0.08);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            width: 110px;
+            text-align: center;
+            transition: 0.3s;
+        }
+        .input-apple:focus {
+            background: white;
+            outline: 2px solid var(--primary);
+            box-shadow: 0 0 15px rgba(0, 113, 227, 0.1);
+        }
 
         .cum-result-badge {
-            background: var(--primary-light);
-            padding: 0.5rem 1.25rem;
-            border-radius: var(--radius-md);
+            background: var(--primary);
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 100px;
             display: flex;
             align-items: center;
             gap: 12px;
-            border: 1px solid var(--primary);
+            transform: scale(0.9);
             opacity: 0;
-            transform: translateY(10px);
-            transition: 0.3s;
-            pointer-events: none;
+            transition: all 0.4s var(--spring-easing);
         }
+        .cum-result-badge.show { transform: scale(1); opacity: 1; }
+        .cum-result-badge span { font-size: 0.8rem; font-weight: 500; }
+        .cum-result-badge strong { font-size: 1.5rem; font-weight: 800; }
 
-        .cum-result-badge.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
-        .cum-result-badge span { font-size: 0.75rem; color: var(--primary); font-weight: 700; }
-        .cum-result-badge strong { font-size: 1.4rem; color: var(--primary); font-variant-numeric: tabular-nums; }
-
-        @media (max-width: 768px) {
-            .cum-inline-card { flex-direction: column; align-items: stretch; gap: 1rem; }
-            .cum-inputs { flex-direction: column; align-items: stretch; gap: 1rem; }
-            .input-group-inline { justify-content: space-between; }
-            .input-group-inline .input-minimal { width: 120px; }
-        }
-
+        /* --- Courses Card --- */
         .main-card {
             background: var(--card-bg);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--border);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-color);
             overflow: hidden;
-            box-shadow: var(--shadow-sm);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
         }
 
-        .card-header {
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .card-header { padding: 1.5rem; border-bottom: 0.5px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .card-header h2 { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em; }
 
-        .table-responsive { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; }
-        th { background: var(--bg-main); padding: 12px 16px; font-size: 0.75rem; color: var(--text-muted); text-align: center; }
-        td { padding: 12px 16px; border-bottom: 1px solid var(--border); text-align: center; font-variant-numeric: tabular-nums; }
+        th { background: rgba(0, 0, 0, 0.02); padding: 12px 16px; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+        td { padding: 12px 16px; border-bottom: 0.5px solid var(--border-color); text-align: center; }
 
-        .input-minimal {
-            border: 1px solid transparent; background: var(--bg-main);
-            padding: 8px 12px; border-radius: var(--radius-md); font-size: 0.9rem; text-align: center;
+        .row-n { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+        
+        .grade-chip {
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            display: inline-block;
+            min-width: 40px;
+            transition: 0.3s;
         }
-
-        .input-minimal:focus { outline: none; background: white; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
-        .input-minimal.name { text-align: right; width: 100%; }
-
-        .grade-chip { padding: 4px 12px; border-radius: 100px; font-size: 0.8rem; font-weight: 700; display: inline-block; min-width: 45px; transition: 0.3s; }
 
         .btn-add {
-            width: 100%; padding: 1.25rem; background: none; border: 2px dashed var(--border);
-            color: var(--primary); font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%;
+            padding: 1.2rem;
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .btn-add:hover { background: rgba(0, 113, 227, 0.05); }
+
+        .btn-delete {
+            color: var(--text-muted);
+            background: rgba(0,0,0,0.05);
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.2s;
+            display: grid;
+            place-items: center;
+        }
+        .btn-delete:hover { background: #fee2e2; color: var(--danger); transform: scale(1.1); }
+
+        footer { text-align: center; padding: 3rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 500; }
+
+        /* --- Keyframes & Animation --- */
+        @keyframes springIn {
+            0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+            70% { transform: translateY(-2px) scale(1.01); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        .btn-delete { color: var(--text-muted); background: none; border: none; cursor: pointer; padding: 5px; }
-        .btn-delete:hover { color: var(--danger); background: #fee2e2; border-radius: 50%; }
+        .animate-row { animation: springIn 0.4s var(--spring-easing) forwards; }
 
-        footer { text-align: center; padding: 2.5rem; color: var(--text-muted); font-size: 0.85rem; }
-        .animate-row { animation: fadeIn 0.2s ease forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+        @media print {
+            header, .mode-switcher, .btn-add, .btn-delete, footer { display: none !important; }
+            body { background: white; padding: 0; }
+            .container { max-width: 100%; margin: 0; padding: 0; }
+            .stat-card { border: 1px solid #eee; box-shadow: none; }
+        }
+
+        @media (max-width: 768px) {
+            .cum-inputs { flex-direction: column; width: 100%; gap: 1rem; }
+            .input-group-inline { width: 100%; flex-direction: row; justify-content: space-between; align-items: center; }
+            .cum-result-badge { width: 100%; justify-content: center; }
+        }
     </style>
 </head>
 <body>
 
 <header>
     <div class="logo-area">
-        <div class="logo-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3.33 2 8.67 2 12 0v-5"/></svg></div>
+        <div class="logo-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3.33 2 8.67 2 12 0v-5"/></svg>
+        </div>
         <div class="logo-text"><h1>حاسبة المعدل</h1></div>
     </div>
     <div class="mode-switcher">
         <button id="btn-b" class="mode-btn active" onclick="switchMode('B')">بكالوريوس</button>
         <button id="btn-m" class="mode-btn" onclick="switchMode('M')">ماجستير</button>
     </div>
-    <button onclick="window.print()" class="mode-btn" style="background: var(--bg-main)">🖨️ طباعة التقرير</button>
+    <button onclick="window.print()" class="mode-btn" style="background: white; border: 0.5px solid var(--border-color);">🖨️ طباعة</button>
 </header>
 
 <div class="container">
+    <!-- Top Dashboard Stats -->
     <div class="stats-dashboard">
         <div class="stat-card featured">
             <span class="stat-label">المعدل الفصلي</span>
@@ -231,24 +327,24 @@
             <span class="stat-value" id="total-points">0.00</span>
         </div>
         <div class="stat-card">
-            <span class="stat-label">التقدير العام</span>
-            <span class="stat-value" id="current-grade" style="font-size: 1.1rem;">—</span>
+            <span class="stat-label">التقدير الحالي</span>
+            <span class="stat-value" id="current-grade" style="font-size: 1.1rem; font-weight: 700;">—</span>
         </div>
     </div>
 
+    <!-- Inline Cumulative Header -->
     <div class="cum-inline-card">
         <div class="cum-section-title">
-            <span>📈</span>
             <h3>المعدل التراكمي</h3>
         </div>
         <div class="cum-inputs">
             <div class="input-group-inline">
                 <label>المعدل السابق</label>
-                <input type="number" id="prev-gpa" class="input-minimal" placeholder="0.00" step="0.01" oninput="updateCurrentState(); calculateAll()">
+                <input type="number" id="prev-gpa" class="input-apple" placeholder="0.00" step="0.01" oninput="updateCurrentState(); calculateAll()">
             </div>
             <div class="input-group-inline">
                 <label>الساعات السابقة</label>
-                <input type="number" id="prev-hours" class="input-minimal" placeholder="0" oninput="updateCurrentState(); calculateAll()">
+                <input type="number" id="prev-hours" class="input-apple" placeholder="0" oninput="updateCurrentState(); calculateAll()">
             </div>
         </div>
         <div id="cum-result-box" class="cum-result-badge">
@@ -257,46 +353,48 @@
         </div>
     </div>
 
+    <!-- Courses List Card -->
     <div class="main-card">
         <div class="card-header">
             <h2 id="table-title">المواد الدراسية (بكالوريوس)</h2>
-            <span id="course-count" style="font-size: 0.8rem; color: var(--text-muted);">0 مواد</span>
+            <span id="course-count" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">0 مواد</span>
         </div>
         <div class="table-responsive">
             <table>
                 <thead>
                     <tr>
-                        <th width="60">#</th>
-                        <th style="text-align: right;">المادة</th>
-                        <th width="120">الدرجة</th>
-                        <th width="120">الساعات</th>
-                        <th width="120">التقدير</th>
-                        <th width="120">النقاط</th>
-                        <th width="60"></th>
+                        <th width="50">#</th>
+                        <th style="text-align: right;">اسم المادة</th>
+                        <th width="100">الدرجة</th>
+                        <th width="100">الساعات</th>
+                        <th width="100">التقدير</th>
+                        <th width="100">النقاط</th>
+                        <th width="50"></th>
                     </tr>
                 </thead>
                 <tbody id="course-body"></tbody>
             </table>
         </div>
         <button class="btn-add" onclick="addNewRow()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            إضافة مادة جديدة في هذا الفصل
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            إضافة مادة جديدة
         </button>
     </div>
 </div>
 
 <footer>
-    <p>تطوير: <strong>د. سالم بن سعيد الحارثي</strong></p>
+    <p>صُمم بواسطة <strong>د. سالم بن سعيد الحارثي</strong></p>
 </footer>
 
 <script>
+    // الجداول المعتمدة حسب الجريدة الرسمية
     const GRADE_SYSTEM = {
         B: [
             { min: 95, label: 'أ', points: 4.0, color: '#10b981' },
             { min: 90, label: 'أ-', points: 3.7, color: '#10b981' },
-            { min: 87, label: 'ب+', points: 3.3, color: '#3b82f6' },
-            { min: 83, label: 'ب', points: 3.0, color: '#3b82f6' },
-            { min: 80, label: 'ب-', points: 2.7, color: '#3b82f6' },
+            { min: 87, label: 'ب+', points: 3.3, color: '#0071E3' },
+            { min: 83, label: 'ب', points: 3.0, color: '#0071E3' },
+            { min: 80, label: 'ب-', points: 2.7, color: '#0071E3' },
             { min: 77, label: 'ج+', points: 2.3, color: '#f59e0b' },
             { min: 73, label: 'ج', points: 2.0, color: '#f59e0b' },
             { min: 70, label: 'ج-', points: 1.7, color: '#f59e0b' },
@@ -307,9 +405,9 @@
         M: [
             { min: 95, label: 'أ', points: 4.0, color: '#10b981' },
             { min: 90, label: 'أ-', points: 3.7, color: '#10b981' },
-            { min: 87, label: 'ب+', points: 3.3, color: '#3b82f6' },
-            { min: 83, label: 'ب', points: 3.0, color: '#3b82f6' },
-            { min: 80, label: 'ب-', points: 2.7, color: '#3b82f6' },
+            { min: 87, label: 'ب+', points: 3.3, color: '#5E5CE6' },
+            { min: 83, label: 'ب', points: 3.0, color: '#5E5CE6' },
+            { min: 80, label: 'ب-', points: 2.7, color: '#5E5CE6' },
             { min: 75, label: 'ج+', points: 2.3, color: '#f59e0b' },
             { min: 70, label: 'ج', points: 2.0, color: '#f59e0b' },
             { min: 0, label: 'هـ', points: 0.0, color: '#ef4444' }
@@ -318,7 +416,7 @@
 
     let appState = {
         currentMode: 'B',
-        B: { courses: [{id:1, name:'', grade:'', hours:3}, {id:2, name:'', grade:'', hours:3}], prevGpa:'', prevHours:'' },
+        B: { courses: [{id:1, name:'', grade:'', hours:3}, {id:2, name:'', grade:'', hours:3}, {id:3, name:'', grade:'', hours:3}], prevGpa:'', prevHours:'' },
         M: { courses: [{id:101, name:'', grade:'', hours:3}, {id:102, name:'', grade:'', hours:3}], prevGpa:'', prevHours:'' }
     };
 
@@ -374,12 +472,12 @@
         tr.id = `row-${id}`;
         tr.className = 'animate-row';
         tr.innerHTML = `
-            <td class="row-index"></td>
-            <td><input type="text" class="input-minimal name" placeholder="اسم المادة" value="${name}" oninput="updateCurrentState()"></td>
-            <td><input type="number" class="input-minimal grade-input" placeholder="0" min="0" max="100" value="${grade}" oninput="updateCurrentState(); calculateAll()"></td>
-            <td><input type="number" class="input-minimal hour-input" min="1" value="${hours}" oninput="updateCurrentState(); calculateAll()"></td>
+            <td class="row-n"></td>
+            <td><input type="text" class="input-apple name" style="width:100%; text-align:right;" placeholder="اسم المادة" value="${name}" oninput="updateCurrentState()"></td>
+            <td><input type="number" class="input-apple grade-input" placeholder="0" min="0" max="100" value="${grade}" oninput="updateCurrentState(); calculateAll()"></td>
+            <td><input type="number" class="input-apple hour-input" min="1" value="${hours}" oninput="updateCurrentState(); calculateAll()"></td>
             <td><span class="grade-chip">—</span></td>
-            <td><span class="points-val">0.00</span></td>
+            <td><span class="points-val" style="font-weight:700; color:var(--text-main);">0.00</span></td>
             <td><button class="btn-delete" onclick="removeRow(${id})">✕</button></td>
         `;
         tbody.appendChild(tr);
@@ -387,14 +485,19 @@
     }
 
     function removeRow(id) {
-        document.getElementById(`row-${id}`).remove();
-        updateIndices();
-        updateCurrentState();
-        calculateAll();
+        const row = document.getElementById(`row-${id}`);
+        row.style.transform = 'scale(0.9) opacity(0)';
+        row.style.transition = '0.3s';
+        setTimeout(() => {
+            row.remove();
+            updateIndices();
+            updateCurrentState();
+            calculateAll();
+        }, 300);
     }
 
     function updateIndices() {
-        const rows = document.querySelectorAll('.row-index');
+        const rows = document.querySelectorAll('.row-n');
         rows.forEach((td, i) => td.innerText = (i + 1));
         document.getElementById('course-count').innerText = `${rows.length} مواد`;
     }
@@ -408,7 +511,7 @@
             const pt = row.querySelector('.points-val');
 
             if (gradeInput.trim() === "") {
-                chip.innerText = '—'; chip.style.backgroundColor = '#f1f5f9'; chip.style.color = '#64748b'; pt.innerText = '0.00'; return;
+                chip.innerText = '—'; chip.style.backgroundColor = 'transparent'; chip.style.color = 'var(--text-muted)'; pt.innerText = '0.00'; return;
             }
 
             const sc = parseFloat(gradeInput);
@@ -417,7 +520,7 @@
 
             if (g && hr > 0) {
                 chip.innerText = g.label;
-                chip.style.backgroundColor = g.color + '20';
+                chip.style.backgroundColor = g.color + '15';
                 chip.style.color = g.color;
                 const p = g.points * hr;
                 pt.innerText = p.toFixed(2);
@@ -425,24 +528,33 @@
             }
         });
 
-        document.getElementById('current-gpa').innerText = (tH > 0 ? (tP / tH) : 0).toFixed(2);
+        const currentGPAValue = (tH > 0 ? (tP / tH) : 0).toFixed(2);
+        
+        // تحريك الرقم عند التغيير
+        const gpaEl = document.getElementById('current-gpa');
+        if (gpaEl.innerText !== currentGPAValue) {
+            gpaEl.style.transform = 'scale(1.1)';
+            setTimeout(() => gpaEl.style.transform = 'scale(1)', 200);
+        }
+        
+        gpaEl.innerText = currentGPAValue;
         document.getElementById('total-hours').innerText = tH;
         document.getElementById('total-points').innerText = tP.toFixed(2);
 
-        let gpa = tH > 0 ? (tP / tH) : 0;
+        let gpa = parseFloat(currentGPAValue);
         let txt = '—';
         if (tH > 0) {
             if (appState.currentMode === 'M') {
                 if (gpa >= 3.75) txt = 'امتياز';
                 else if (gpa >= 3.00) txt = 'جيد جداً';
-                else if (gpa >= 2.50) txt = 'جيد (مرضي)';
-                else txt = 'ضعيف (تحت الملاحظة)';
+                else if (gpa >= 2.50) txt = 'جيد مرضي';
+                else txt = 'ضعيف';
             } else {
                 if (gpa >= 3.50) txt = 'امتياز';
                 else if (gpa >= 3.00) txt = 'جيد جداً';
                 else if (gpa >= 2.50) txt = 'جيد';
                 else if (gpa >= 2.00) txt = 'مقبول';
-                else txt = 'ضعيف (رسوب)';
+                else txt = 'ضعيف';
             }
         }
         document.getElementById('current-grade').innerText = txt;
