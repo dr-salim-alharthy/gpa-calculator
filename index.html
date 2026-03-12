@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>حاسبة المعدل الجامعي - تجربة Apple</title>
+    <title>حاسبة المعدل الجامعي - تجربة Apple المطورة</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Apple Color Palette */
             --bg-color: #F5F5F7;
-            --card-bg: rgba(255, 255, 255, 0.8);
+            --card-bg: rgba(255, 255, 255, 0.85);
             --primary: #0071E3;
             --primary-gradient: linear-gradient(135deg, #0071E3, #00B4DB);
             --master-primary: #5E5CE6;
@@ -17,12 +16,12 @@
             --text-main: #1D1D1F;
             --text-muted: #86868B;
             --border-color: rgba(0, 0, 0, 0.1);
-            --glass-bg: rgba(255, 255, 255, 0.7);
-            
-            --radius-xl: 20px;
-            --radius-lg: 14px;
-            --radius-md: 10px;
-            
+            --glass-bg: rgba(255, 255, 255, 0.75);
+
+            --radius-xl: 22px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+
             --spring-easing: cubic-bezier(0.4, 0, 0.2, 1);
         }
 
@@ -35,25 +34,26 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Tajawal', -apple-system, sans-serif;
             -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
             min-height: 100vh;
-            padding-bottom: 50px;
+            padding-bottom: env(safe-area-inset-bottom, 20px);
             transition: background-color 0.5s var(--spring-easing);
         }
 
-        /* --- Header: Frosted Glass --- */
+        /* --- Header --- */
         header {
             background: var(--glass-bg);
-            -webkit-backdrop-filter: blur(20px);
-            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(25px);
+            backdrop-filter: blur(25px);
             border-bottom: 0.5px solid var(--border-color);
-            padding: 0.8rem 2rem;
+            padding: 0.7rem 1.5rem;
             position: sticky;
             top: 0;
             z-index: 1000;
@@ -62,173 +62,186 @@
             align-items: center;
         }
 
-        .logo-area { display: flex; align-items: center; gap: 12px; }
-        .logo-icon { 
+        .logo-area { display: flex; align-items: center; gap: 10px; }
+        .logo-icon {
             background: var(--primary-gradient);
             color: white;
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius-md);
+            width: 32px;
+            height: 32px;
+            border-radius: 9px;
             display: grid;
             place-items: center;
-            box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
-            transition: transform 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 113, 227, 0.2);
         }
-        .logo-icon:hover { transform: rotate(-5deg) scale(1.1); }
-        .logo-text h1 { font-size: 1rem; font-weight: 700; letter-spacing: -0.02em; }
-        
-        /* Mode Switcher: Apple Style */
+        .logo-text h1 { font-size: 0.95rem; font-weight: 800; letter-spacing: -0.01em; }
+
         .mode-switcher {
             background: rgba(120, 120, 128, 0.12);
-            padding: 3px;
-            border-radius: 12px;
+            padding: 2px;
+            border-radius: 10px;
             display: flex;
-            gap: 2px;
         }
 
         .mode-btn {
             border: none;
             background: none;
-            padding: 6px 16px;
-            border-radius: 9px;
-            font-size: 0.85rem;
-            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: 0.25s var(--spring-easing);
+            transition: 0.2s;
             color: var(--text-muted);
         }
 
         .mode-btn.active {
             background: white;
             color: var(--primary);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .container {
             max-width: 1000px;
-            margin: 2rem auto;
-            padding: 0 1.5rem;
+            margin: 1rem auto;
+            padding: 0 1rem;
             display: grid;
-            gap: 1.5rem;
+            gap: 1.2rem;
         }
 
         /* --- Dashboard Stats --- */
         .stats-dashboard {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 1.2rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem;
+        }
+
+        @media (min-width: 600px) {
+            .stats-dashboard { grid-template-columns: repeat(4, 1fr); }
         }
 
         .stat-card {
             background: white;
-            padding: 1.5rem;
-            border-radius: var(--radius-xl);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+            padding: 1rem;
+            border-radius: var(--radius-lg);
+            border: 0.5px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            gap: 4px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            overflow: hidden;
+            gap: 2px;
         }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        }
-
-        .stat-label { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; }
-        .stat-value { font-size: 1.8rem; font-weight: 800; color: var(--text-main); font-variant-numeric: tabular-nums; }
+        .stat-label { font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
+        .stat-value { font-size: 1.4rem; font-weight: 800; color: var(--text-main); font-variant-numeric: tabular-nums; }
 
         .stat-card.featured {
             background: var(--primary-gradient);
             color: white;
+            grid-column: span 1;
         }
-        .stat-card.featured .stat-label { color: rgba(255, 255, 255, 0.7); }
-        .stat-card.featured .stat-value { color: white; font-size: 2.4rem; line-height: 1; }
+        .stat-card.featured .stat-label { color: rgba(255, 255, 255, 0.8); }
+        .stat-card.featured .stat-value { color: white; font-size: 1.8rem; }
 
         /* --- Cumulative Inline Bar --- */
         .cum-inline-card {
-            background: var(--card-bg);
-            -webkit-backdrop-filter: blur(10px);
-            backdrop-filter: blur(10px);
-            border-radius: var(--radius-xl);
-            border: 1px solid var(--border-color);
-            padding: 1.2rem 1.8rem;
+            background: white;
+            border-radius: var(--radius-lg);
+            border: 0.5px solid var(--border-color);
+            padding: 1rem;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1.5rem;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .cum-inline-card { flex-direction: row; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; }
         }
 
         .cum-inputs {
             display: flex;
-            gap: 2rem;
-            align-items: center;
+            gap: 1rem;
+            width: 100%;
         }
 
         .input-group-inline {
             display: flex;
             flex-direction: column;
             gap: 4px;
+            flex: 1;
         }
 
         .input-group-inline label { font-size: 0.7rem; color: var(--text-muted); font-weight: 700; }
-        
+
         .input-apple {
             background: rgba(120, 120, 128, 0.08);
             border: none;
-            padding: 8px 12px;
+            padding: 10px;
             border-radius: 10px;
             font-size: 0.95rem;
-            font-weight: 600;
-            width: 110px;
+            font-weight: 700;
+            width: 100%;
             text-align: center;
-            transition: 0.3s;
-        }
-        .input-apple:focus {
-            background: white;
-            outline: 2px solid var(--primary);
-            box-shadow: 0 0 15px rgba(0, 113, 227, 0.1);
         }
 
         .cum-result-badge {
-            background: var(--primary);
-            color: white;
-            padding: 0.6rem 1.5rem;
-            border-radius: 100px;
-            display: flex;
+            background: rgba(0, 113, 227, 0.07);
+            color: var(--primary);
+            padding: 0.8rem;
+            border-radius: 12px;
             align-items: center;
-            gap: 12px;
-            transform: scale(0.9);
-            opacity: 0;
-            transition: all 0.4s var(--spring-easing);
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            border: 1px solid rgba(0, 113, 227, 0.1);
+            display: none;
         }
-        .cum-result-badge.show { transform: scale(1); opacity: 1; }
-        .cum-result-badge span { font-size: 0.8rem; font-weight: 500; }
-        .cum-result-badge strong { font-size: 1.5rem; font-weight: 800; }
+        .cum-result-badge.show { display: flex; }
+        .cum-result-badge span { font-size: 0.75rem; font-weight: 700; }
+        .cum-result-badge strong { font-size: 1.6rem; font-weight: 800; }
 
         /* --- Courses Card --- */
         .main-card {
-            background: var(--card-bg);
-            -webkit-backdrop-filter: blur(10px);
-            backdrop-filter: blur(10px);
-            border-radius: var(--radius-xl);
-            border: 1px solid var(--border-color);
+            background: white;
+            border-radius: var(--radius-lg);
+            border: 0.5px solid var(--border-color);
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
         }
 
-        .card-header { padding: 1.5rem; border-bottom: 0.5px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
-        .card-header h2 { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em; }
+        .card-header { padding: 1rem 1.2rem; border-bottom: 0.5px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .card-header h2 { font-size: 1rem; font-weight: 800; }
 
-        table { width: 100%; border-collapse: collapse; }
-        th { background: rgba(0, 0, 0, 0.02); padding: 12px 16px; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-        td { padding: 12px 16px; border-bottom: 0.5px solid var(--border-color); text-align: center; }
+        .table-responsive { width: 100%; }
+
+        @media (max-width: 600px) {
+            thead { display: none; }
+            #course-body tr {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                padding: 1.2rem;
+                border-bottom: 1px solid var(--border-color);
+                position: relative;
+            }
+            #course-body tr td { padding: 0; border: none; text-align: right; display: flex; flex-direction: column; align-items: flex-start; }
+            #course-body tr td:first-child { display: none; }
+            #course-body tr td:nth-child(2) { grid-column: span 2; width: 100%; }
+            #course-body tr td:nth-child(2) input { text-align: right; font-size: 1rem; }
+            #course-body tr td::before {
+                content: attr(data-label);
+                font-size: 0.65rem;
+                font-weight: 700;
+                color: var(--text-muted);
+                margin-bottom: 4px;
+            }
+            .btn-delete { position: absolute; top: 1rem; left: 1rem; }
+        }
+
+        @media (min-width: 601px) {
+            table { width: 100%; border-collapse: collapse; }
+            th { background: rgba(0, 0, 0, 0.02); padding: 12px; font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+            td { padding: 12px; border-bottom: 0.5px solid var(--border-color); text-align: center; }
+        }
 
         .row-n { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
-        
+
         .grade-chip {
             padding: 4px 10px;
             border-radius: 8px;
@@ -236,7 +249,6 @@
             font-weight: 800;
             display: inline-block;
             min-width: 40px;
-            transition: 0.3s;
         }
 
         .btn-add {
@@ -245,54 +257,31 @@
             background: none;
             border: none;
             color: var(--primary);
-            font-weight: 700;
-            font-size: 0.95rem;
+            font-weight: 800;
+            font-size: 1rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: 0.2s;
         }
-        .btn-add:hover { background: rgba(0, 113, 227, 0.05); }
 
         .btn-delete {
             color: var(--text-muted);
             background: rgba(0,0,0,0.05);
             border: none;
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             cursor: pointer;
-            transition: 0.2s;
             display: grid;
             place-items: center;
         }
-        .btn-delete:hover { background: #fee2e2; color: var(--danger); transform: scale(1.1); }
 
-        footer { text-align: center; padding: 3rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 500; }
+        footer { text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; }
 
-        /* --- Keyframes & Animation --- */
-        @keyframes springIn {
-            0% { opacity: 0; transform: translateY(20px) scale(0.95); }
-            70% { transform: translateY(-2px) scale(1.01); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .animate-row { animation: springIn 0.4s var(--spring-easing) forwards; }
-
-        @media print {
-            header, .mode-switcher, .btn-add, .btn-delete, footer { display: none !important; }
-            body { background: white; padding: 0; }
-            .container { max-width: 100%; margin: 0; padding: 0; }
-            .stat-card { border: 1px solid #eee; box-shadow: none; }
-        }
-
-        @media (max-width: 768px) {
-            .cum-inputs { flex-direction: column; width: 100%; gap: 1rem; }
-            .input-group-inline { width: 100%; flex-direction: row; justify-content: space-between; align-items: center; }
-            .cum-result-badge { width: 100%; justify-content: center; }
-        }
+        .animate-row { animation: fadeIn 0.3s var(--spring-easing) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -300,7 +289,7 @@
 <header>
     <div class="logo-area">
         <div class="logo-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3.33 2 8.67 2 12 0v-5"/></svg>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3.33 2 8.67 2 12 0v-5"/></svg>
         </div>
         <div class="logo-text"><h1>حاسبة المعدل</h1></div>
     </div>
@@ -308,7 +297,6 @@
         <button id="btn-b" class="mode-btn active" onclick="switchMode('B')">بكالوريوس</button>
         <button id="btn-m" class="mode-btn" onclick="switchMode('M')">ماجستير</button>
     </div>
-    <button onclick="window.print()" class="mode-btn" style="background: white; border: 0.5px solid var(--border-color);">🖨️ طباعة</button>
 </header>
 
 <div class="container">
@@ -319,24 +307,21 @@
             <span class="stat-value" id="current-gpa">0.00</span>
         </div>
         <div class="stat-card">
-            <span class="stat-label">إجمالي الساعات</span>
+            <span class="stat-label">التقدير</span>
+            <span class="stat-value" id="current-grade" style="font-size: 1rem;">—</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">الساعات</span>
             <span class="stat-value" id="total-hours">0</span>
         </div>
         <div class="stat-card">
-            <span class="stat-label">إجمالي النقاط</span>
+            <span class="stat-label">النقاط</span>
             <span class="stat-value" id="total-points">0.00</span>
-        </div>
-        <div class="stat-card">
-            <span class="stat-label">التقدير الحالي</span>
-            <span class="stat-value" id="current-grade" style="font-size: 1.1rem; font-weight: 700;">—</span>
         </div>
     </div>
 
     <!-- Inline Cumulative Header -->
     <div class="cum-inline-card">
-        <div class="cum-section-title">
-            <h3>المعدل التراكمي</h3>
-        </div>
         <div class="cum-inputs">
             <div class="input-group-inline">
                 <label>المعدل السابق</label>
@@ -356,19 +341,19 @@
     <!-- Courses List Card -->
     <div class="main-card">
         <div class="card-header">
-            <h2 id="table-title">المواد الدراسية (بكالوريوس)</h2>
-            <span id="course-count" style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">0 مواد</span>
+            <h2 id="table-title">المواد الدراسية</h2>
+            <span id="course-count" style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">0 مواد</span>
         </div>
         <div class="table-responsive">
             <table>
                 <thead>
                     <tr>
                         <th width="50">#</th>
-                        <th style="text-align: right;">اسم المادة</th>
-                        <th width="100">الدرجة</th>
-                        <th width="100">الساعات</th>
-                        <th width="100">التقدير</th>
-                        <th width="100">النقاط</th>
+                        <th style="text-align: right;">المادة</th>
+                        <th width="80">الدرجة</th>
+                        <th width="80">الساعات</th>
+                        <th width="80">التقدير</th>
+                        <th width="80">النقاط</th>
                         <th width="50"></th>
                     </tr>
                 </thead>
@@ -376,7 +361,7 @@
             </table>
         </div>
         <button class="btn-add" onclick="addNewRow()">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             إضافة مادة جديدة
         </button>
     </div>
@@ -387,7 +372,6 @@
 </footer>
 
 <script>
-    // الجداول المعتمدة حسب الجريدة الرسمية
     const GRADE_SYSTEM = {
         B: [
             { min: 95, label: 'أ', points: 4.0, color: '#10b981' },
@@ -416,7 +400,7 @@
 
     let appState = {
         currentMode: 'B',
-        B: { courses: [{id:1, name:'', grade:'', hours:3}, {id:2, name:'', grade:'', hours:3}, {id:3, name:'', grade:'', hours:3}], prevGpa:'', prevHours:'' },
+        B: { courses: [{id:1, name:'', grade:'', hours:3}, {id:2, name:'', grade:'', hours:3}], prevGpa:'', prevHours:'' },
         M: { courses: [{id:101, name:'', grade:'', hours:3}, {id:102, name:'', grade:'', hours:3}], prevGpa:'', prevHours:'' }
     };
 
@@ -473,11 +457,11 @@
         tr.className = 'animate-row';
         tr.innerHTML = `
             <td class="row-n"></td>
-            <td><input type="text" class="input-apple name" style="width:100%; text-align:right;" placeholder="اسم المادة" value="${name}" oninput="updateCurrentState()"></td>
-            <td><input type="number" class="input-apple grade-input" placeholder="0" min="0" max="100" value="${grade}" oninput="updateCurrentState(); calculateAll()"></td>
-            <td><input type="number" class="input-apple hour-input" min="1" value="${hours}" oninput="updateCurrentState(); calculateAll()"></td>
-            <td><span class="grade-chip">—</span></td>
-            <td><span class="points-val" style="font-weight:700; color:var(--text-main);">0.00</span></td>
+            <td data-label="المادة"><input type="text" class="input-apple name" style="width:100%; text-align:right;" placeholder="اسم المادة" value="${name}" oninput="updateCurrentState()"></td>
+            <td data-label="الدرجة"><input type="number" class="input-apple grade-input" placeholder="0" min="0" max="100" value="${grade}" oninput="updateCurrentState(); calculateAll()"></td>
+            <td data-label="الساعات"><input type="number" class="input-apple hour-input" min="1" value="${hours}" oninput="updateCurrentState(); calculateAll()"></td>
+            <td data-label="التقدير"><span class="grade-chip">—</span></td>
+            <td data-label="النقاط"><span class="points-val" style="font-weight:700; color:var(--text-main);">0.00</span></td>
             <td><button class="btn-delete" onclick="removeRow(${id})">✕</button></td>
         `;
         tbody.appendChild(tr);
@@ -486,8 +470,7 @@
 
     function removeRow(id) {
         const row = document.getElementById(`row-${id}`);
-        row.style.transform = 'scale(0.9) opacity(0)';
-        row.style.transition = '0.3s';
+        row.style.opacity = '0';
         setTimeout(() => {
             row.remove();
             updateIndices();
@@ -528,20 +511,11 @@
             }
         });
 
-        const currentGPAValue = (tH > 0 ? (tP / tH) : 0).toFixed(2);
-        
-        // تحريك الرقم عند التغيير
-        const gpaEl = document.getElementById('current-gpa');
-        if (gpaEl.innerText !== currentGPAValue) {
-            gpaEl.style.transform = 'scale(1.1)';
-            setTimeout(() => gpaEl.style.transform = 'scale(1)', 200);
-        }
-        
-        gpaEl.innerText = currentGPAValue;
+        document.getElementById('current-gpa').innerText = (tH > 0 ? (tP / tH) : 0).toFixed(2);
         document.getElementById('total-hours').innerText = tH;
         document.getElementById('total-points').innerText = tP.toFixed(2);
 
-        let gpa = parseFloat(currentGPAValue);
+        let gpa = parseFloat(document.getElementById('current-gpa').innerText);
         let txt = '—';
         if (tH > 0) {
             if (appState.currentMode === 'M') {
@@ -562,7 +536,7 @@
         const pg = parseFloat(document.getElementById('prev-gpa').value);
         const ph = parseFloat(document.getElementById('prev-hours').value) || 0;
         const resultBadge = document.getElementById('cum-result-box');
-        
+
         if (!isNaN(pg) && (tH + ph) > 0) {
             document.getElementById('final-cum-gpa').innerText = (((pg * ph) + tP) / (tH + ph)).toFixed(2);
             resultBadge.classList.add('show');
